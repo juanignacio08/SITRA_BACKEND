@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /sitra/api/v1
+spring:
+  application:
+    name: sitra
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/SITRA
+    username: postgres
+    password: 983603412Juan
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-test-query: SELECT 1
+#  jpa:
+#    show-sql: true
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#    properties:
+#      hibernate:
+#        format_sql: true
+
+    #logging:
+    #    level:
+    #        org.hibernate.SQL: DEBUG #INFO
+    #        org.hibernate.type.descriptor.sql.BasicBinder: INFO #TRACE
+    #org.hibernate.orm.jdbc.bind: TRACE
