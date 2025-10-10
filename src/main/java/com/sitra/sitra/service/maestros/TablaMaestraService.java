@@ -1,7 +1,8 @@
 package com.sitra.sitra.service.maestros;
 
-import com.sitra.sitra.entity.maestros.TablaMaestraEntity;
+import com.sitra.sitra.expose.request.maestros.TablaMaestraRequest;
+import com.sitra.sitra.expose.response.maestros.TablaMaestraResponse;
 
 public interface TablaMaestraService {
-    TablaMaestraEntity save(TablaMaestraEntity entity);
+    TablaMaestraResponse save(TablaMaestraRequest request);
 }
