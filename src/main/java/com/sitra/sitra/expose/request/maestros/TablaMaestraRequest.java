@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.Range;
 
 import java.time.LocalDateTime;
 import java.util.function.Function;
@@ -42,6 +43,7 @@ public class TablaMaestraRequest {
 
     private Integer esSistema;
 
+    @Range(min = 0, max = 1, message = "El estado debe de estar en el rango [ 0 - 1]")
     private int estado;
 
     public static final Function<TablaMaestraRequest, TablaMaestraEntity> toEntity = request -> TablaMaestraEntity.builder()
@@ -59,5 +61,15 @@ public class TablaMaestraRequest {
             .fechaCreacion(LocalDateTime.now())
             .eliminado(false)
             .build();
+
+    public static void toUpdate(TablaMaestraRequest request, TablaMaestraEntity entity) {
+        entity.setOrden(request.getOrden());
+        entity.setAbreviatura(request.getAbreviatura());
+        entity.setDenominacion(request.getDenominacion());
+        entity.setEsSistema(request.getEsSistema());
+        entity.setEstado(request.getEstado() == 0 ? 0 : 1);
+        entity.setActualizadoPor(1L);
+        entity.setFechaActualizacion(LocalDateTime.now());
+    }
 
 }

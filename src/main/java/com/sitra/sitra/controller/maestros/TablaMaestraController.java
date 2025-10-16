@@ -8,7 +8,6 @@ import com.sitra.sitra.service.maestros.TablaMaestraService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +21,6 @@ import java.util.List;
 public class TablaMaestraController {
 
     private final TablaMaestraService tablaMaestraService;
-
-    @GetMapping("/get/{name}")
-    public String prueba(@PathVariable(name = "name") String name) {
-        return "Esto es una prueba...";
-    }
 
     @PostMapping("/save")
     public ResponseEntity<ResponseDTO<Object>> save(@RequestBody @Valid TablaMaestraRequest request) {
@@ -57,4 +51,29 @@ public class TablaMaestraController {
         }
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<ResponseDTO<Object>> update(@RequestBody @Valid TablaMaestraRequest request) {
+        try {
+            TablaMaestraResponse response = tablaMaestraService.update(request);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Tabla maestra actualizada!");
+            log.info("Actualizando tabla maestra. [ TABLAMAESTRA : {} ]", request.getIdTablaMaestra());
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en update: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @PutMapping("/delete")
+    public ResponseEntity<ResponseDTO<Object>> delete(@RequestParam(name = "tablaMaestraID") Long id) {
+        try {
+            String mensaje = tablaMaestraService.delete(id);
+            ResponseDTO<Object> responseDTO = AppUtil.build(mensaje, mensaje);
+            log.info("Eliminando tabla maestra. [ TABLAMAESTRA : {} ]", id);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en delete: {}", e.getMessage());
+            throw e;
+        }
+    }
 }

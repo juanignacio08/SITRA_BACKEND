@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TablaMaestraRepository extends JpaRepository<TablaMaestraEntity, Long> {
@@ -12,6 +13,11 @@ public interface TablaMaestraRepository extends JpaRepository<TablaMaestraEntity
     List<TablaMaestraEntity> findByCodigoTablaAndCodigoItemNotAndEstadoAndEliminado(String codeTable, String codeItem, int estado, Boolean eliminado);
     default List<TablaMaestraEntity> getItems(String codeTable) {
         return findByCodigoTablaAndCodigoItemNotAndEstadoAndEliminado(codeTable, "000", 1, false);
+    }
+
+    Optional<TablaMaestraEntity> findByIdTablaMaestraAndEliminado(Long id, Boolean eliminado);
+    default Optional<TablaMaestraEntity> getByID(Long id) {
+        return findByIdTablaMaestraAndEliminado(id, false);
     }
 
 }

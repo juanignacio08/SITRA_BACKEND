@@ -8,4 +8,6 @@ import java.util.List;
 public interface TablaMaestraService {
     TablaMaestraResponse save(TablaMaestraRequest request);
     List<TablaMaestraResponse> getItems(String codeTable);
+    TablaMaestraResponse update(TablaMaestraRequest request);
+    String delete(Long id);
 }
