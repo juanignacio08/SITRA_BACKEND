@@ -2,9 +2,7 @@ package com.sitra.sitra.expose.request.seguridad;
 
 import com.sitra.sitra.entity.seguridad.PersonaEntity;
 import com.sitra.sitra.expose.util.SecurityUtil;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
@@ -19,11 +17,6 @@ import java.util.function.Function;
 @Builder
 @ToString
 public class PersonaRequest {
-
-    @NotNull(message = "El id es requerido")
-    @Min(value = 1, message = "El id debe ser mayor a cero")
-    private Long personaId;
-
     @NotBlank(message = "El apellido paterno es requerido")
     @Size(max = 100, message = "El apellido paterno debe tener menos de 100 caracteres")
     private String apellidoPaterno;

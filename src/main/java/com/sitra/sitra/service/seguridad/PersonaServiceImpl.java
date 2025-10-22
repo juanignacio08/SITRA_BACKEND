@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -22,6 +23,7 @@ public class PersonaServiceImpl implements PersonaService{
     private String context;
 
     @Override
+    @Transactional
     public PersonaResponse save(PersonaRequest request) {
         context = "savePerson";
         log.info("Registrando una persona. [ CONTEXT : {} ]", context);
@@ -45,12 +47,23 @@ public class PersonaServiceImpl implements PersonaService{
     }
 
     @Override
+    @Transactional
     public PersonaResponse update(PersonaRequest request) {
-        return null;
+        context = "updatePerson";
+        log.info("Modificando una persona. [ PERSONA : {} | CONTEXTO : {} ]", request.getNumeroDocumentoIdentidad(), context);
+
+        PersonaEntity entity = getPersonByNumberDocument(request.getNumeroDocumentoIdentidad());
+
+        PersonaRequest.toUpdate(request, entity);
+
+        PersonaEntity save = personaRepository.save(entity);
+
+        return PersonaResponse.toResponse.apply(save);
     }
 
     @Override
     public PersonaResponse deleteByNumberDocument(String numberDocument) {
+        context = "deletePerson";
         return null;
     }
 
