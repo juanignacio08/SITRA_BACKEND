@@ -9,8 +9,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 
 @RestController
@@ -20,6 +21,10 @@ import org.springframework.web.bind.annotation.*;
 public class PersonaController {
     
     private final PersonaService personaService;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    String token = "sk_10017.KIsjqlKiWYGTM72N1MLgfVWSDakDxiki";
 
     @PostMapping("/save")
     public ResponseEntity<ResponseDTO<Object>> save(@RequestBody @Valid PersonaRequest request) {
@@ -70,6 +75,27 @@ public class PersonaController {
         } catch (Exception e) {
             log.error("Error en delete: {}", e.getMessage());
             throw e;
+        }
+    }
+
+    @GetMapping("/dni/{numero}")
+    public ResponseEntity<?> getDni(@PathVariable String numero) {
+        String url = "https://api.decolecta.com/v1/reniec/dni?numero=" + numero;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url, HttpMethod.GET, entity, String.class
+            );
+            return ResponseEntity.ok(response.getBody());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body("Error al consultar DNI: " + e.getMessage());
         }
     }
     
