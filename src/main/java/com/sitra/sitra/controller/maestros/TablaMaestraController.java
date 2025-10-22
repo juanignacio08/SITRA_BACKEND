@@ -51,6 +51,19 @@ public class TablaMaestraController {
         }
     }
 
+    @GetMapping("/getItem/{code}")
+    public ResponseEntity<ResponseDTO<Object>> getItem(@PathVariable(name = "code") String code) {
+        try {
+            TablaMaestraResponse response = tablaMaestraService.getByCode(code);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo item de tabla maestra! Codigo : " + code);
+            log.info("Obteniendo item de tabla maestra [ CODIGO : {}]", code);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getItemByCode: {}", e.getMessage());
+            throw e;
+        }
+    }
+
     @PutMapping("/update")
     public ResponseEntity<ResponseDTO<Object>> update(@RequestBody @Valid TablaMaestraRequest request) {
         try {

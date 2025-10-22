@@ -1,13 +1,14 @@
 package com.sitra.sitra.service.maestros.impl;
 
 import com.sitra.sitra.entity.maestros.TablaMaestraEntity;
+import com.sitra.sitra.exceptions.BadRequestException;
+import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.maestros.TablaMaestraRequest;
 import com.sitra.sitra.expose.response.maestros.TablaMaestraResponse;
 import com.sitra.sitra.repository.maestros.TablaMaestraRepository;
 import com.sitra.sitra.service.maestros.TablaMaestraService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,16 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
     }
 
     @Override
+    public TablaMaestraResponse getByCode(String code) {
+        context = "getItemByCode";
+        log.info("Obteniendo un item de una tabla. [ CODIGOITEM : {} | CONTEXT : {} ]", code, context);
+
+        TablaMaestraEntity entity = getItemByCode(code);
+
+        return TablaMaestraResponse.toResponse.apply(entity);
+    }
+
+    @Override
     public TablaMaestraResponse update(TablaMaestraRequest request) {
         context = "updateTablaMaestra";
         log.info("Actualizando un registro de tabla maestra. [ TABLAMAESTRAID : {} | CONTEXTO : {} ]", request.getIdTablaMaestra(), context);
@@ -72,16 +83,23 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
         entity.setActualizadoPor(1L);
         entity.setFechaActualizacion(LocalDateTime.now());
 
-        TablaMaestraEntity save = tablaMaestraRepository.save(entity);
+        tablaMaestraRepository.save(entity);
 
         return "Tabla Maestra con id " + id + " fue eliminado.";
 
     }
 
     private TablaMaestraEntity getById(Long id) {
-        if (id == null || id < 1) throw new IllegalArgumentException("Id incorrecto. [ TABLAMAESTRA ]");
+        if (id == null || id < 1) throw new BadRequestException("Id incorrecto. [ TABLAMAESTRA ]");
 
         return tablaMaestraRepository.getByID(id)
-                .orElseThrow(() -> new IllegalArgumentException("Recurso no encontrado. [ TABLA MAESTRA ]"));
+                .orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ TABLA MAESTRA ]"));
+    }
+
+    private TablaMaestraEntity getItemByCode(String code) {
+        if (code == null || code.length() != 6) throw new BadRequestException("Codigo incorrecto. [ TABLAMAESTRA ]");
+
+        return tablaMaestraRepository.getByCode(code)
+                .orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ TABLA MAESTRA ]"));
     }
 }

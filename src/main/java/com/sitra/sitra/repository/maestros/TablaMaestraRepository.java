@@ -20,4 +20,9 @@ public interface TablaMaestraRepository extends JpaRepository<TablaMaestraEntity
         return findByIdTablaMaestraAndEliminado(id, false);
     }
 
+    Optional<TablaMaestraEntity> findByCodigoAndEliminado(String code, Boolean eliminado);
+    default Optional<TablaMaestraEntity> getByCode(String code) {
+        return findByCodigoAndEliminado(code, false);
+    }
+
 }
