@@ -6,12 +6,15 @@ import com.sitra.sitra.exceptions.DuplicateKeyError;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.seguridad.PersonaRequest;
 import com.sitra.sitra.expose.response.seguridad.PersonaResponse;
+import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.repository.seguridad.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -62,9 +65,19 @@ public class PersonaServiceImpl implements PersonaService{
     }
 
     @Override
+    @Transactional
     public PersonaResponse deleteByNumberDocument(String numberDocument) {
         context = "deletePerson";
-        return null;
+        log.info("Eliminando una persona. [ PERSONA : {} | CONTEXTO : {} ]", numberDocument, context);
+
+        PersonaEntity entity = getPersonByNumberDocument(numberDocument);
+        entity.setEliminado(true);
+        entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
+        entity.setFechaActualizacion(LocalDateTime.now());
+
+        PersonaEntity save = personaRepository.save(entity);
+
+        return PersonaResponse.toResponse.apply(save);
     }
 
     @Override
@@ -81,6 +94,5 @@ public class PersonaServiceImpl implements PersonaService{
         return personaRepository.getByNumberDocument(numberDocument)
                 .orElseThrow(() -> new NotFoundException("Registro no encontrado [ PERSONA ]"));
     }
-
 
 }
