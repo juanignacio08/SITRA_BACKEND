@@ -1,6 +1,7 @@
 package com.sitra.sitra.expose.response.maestros;
 
 //import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sitra.sitra.entity.maestros.TablaMaestraEntity;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.util.function.Function;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TablaMaestraResponse {
 
     private Long idTablaMaestra;

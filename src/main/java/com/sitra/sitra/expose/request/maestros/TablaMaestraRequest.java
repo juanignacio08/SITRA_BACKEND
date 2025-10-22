@@ -1,6 +1,7 @@
 package com.sitra.sitra.expose.request.maestros;
 
 import com.sitra.sitra.entity.maestros.TablaMaestraEntity;
+import com.sitra.sitra.expose.util.SecurityUtil;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -55,9 +56,9 @@ public class TablaMaestraRequest {
             .denominacion(request.getDenominacion())
             .esSistema(request.getEsSistema())
             .estado(1)
-            .actualizadoPor(1L)
+            .actualizadoPor(SecurityUtil.getCurrentUserId())
             .fechaActualizacion(LocalDateTime.now())
-            .creadoPor(1L)
+            .creadoPor(SecurityUtil.getCurrentUserId())
             .fechaCreacion(LocalDateTime.now())
             .eliminado(false)
             .build();
@@ -68,7 +69,7 @@ public class TablaMaestraRequest {
         entity.setDenominacion(request.getDenominacion());
         entity.setEsSistema(request.getEsSistema());
         entity.setEstado(request.getEstado() == 0 ? 0 : 1);
-        entity.setActualizadoPor(1L);
+        entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
         entity.setFechaActualizacion(LocalDateTime.now());
     }
 

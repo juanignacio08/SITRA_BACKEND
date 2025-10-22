@@ -2,6 +2,7 @@ package com.sitra.sitra.service.maestros.impl;
 
 import com.sitra.sitra.entity.maestros.TablaMaestraEntity;
 import com.sitra.sitra.exceptions.BadRequestException;
+import com.sitra.sitra.exceptions.DuplicateKeyError;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.maestros.TablaMaestraRequest;
 import com.sitra.sitra.expose.response.maestros.TablaMaestraResponse;
@@ -30,6 +31,8 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
     public TablaMaestraResponse save(TablaMaestraRequest request) {
         context = "saveTablaMaestra";
         log.info("Registrando un nuevo registro de tabla maestra. [ CONTEXTO : {} ]", context);
+
+        if (existsByCode(request.getCodigoTabla() + request.getCodigoItem())) throw new DuplicateKeyError("Error! Codigo duplicado.");
 
         TablaMaestraEntity entity = TablaMaestraRequest.toEntity.apply(request);
 
@@ -101,5 +104,11 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
 
         return tablaMaestraRepository.getByCode(code)
                 .orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ TABLA MAESTRA ]"));
+    }
+
+    private boolean existsByCode(String code) {
+        if (code == null || code.length() != 6) throw new BadRequestException("Codigo incorrecto. [ TABLAMAESTRA ]");
+
+        return tablaMaestraRepository.existsByCode(code);
     }
 }
