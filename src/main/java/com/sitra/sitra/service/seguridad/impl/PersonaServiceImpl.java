@@ -1,4 +1,4 @@
-package com.sitra.sitra.service.seguridad;
+package com.sitra.sitra.service.seguridad.impl;
 
 import com.sitra.sitra.entity.seguridad.PersonaEntity;
 import com.sitra.sitra.exceptions.BadRequestException;
@@ -8,6 +8,7 @@ import com.sitra.sitra.expose.request.seguridad.PersonaRequest;
 import com.sitra.sitra.expose.response.seguridad.PersonaResponse;
 import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.repository.seguridad.PersonaRepository;
+import com.sitra.sitra.service.seguridad.PersonaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = @__(@Autowired))
-public class PersonaServiceImpl implements PersonaService{
+public class PersonaServiceImpl implements PersonaService {
 
     private final PersonaRepository personaRepository;
 
