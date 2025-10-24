@@ -32,7 +32,7 @@ public class PersonaServiceImpl implements PersonaService {
         context = "savePerson";
         log.info("Registrando una persona. [ CONTEXT : {} ]", context);
 
-        if (existsByNumberDocument(request.getNumeroDocumentoIdentidad())) new DuplicateKeyError("Error! Numero de documento duplicado!");
+        if (existsByNumberDocument(request.getNumeroDocumentoIdentidad())) throw new DuplicateKeyError("Error! Numero de documento duplicado!");
 
         PersonaEntity entity = PersonaRequest.toEntity.apply(request);
 

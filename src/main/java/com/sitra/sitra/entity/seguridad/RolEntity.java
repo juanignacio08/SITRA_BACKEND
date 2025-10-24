@@ -6,32 +6,20 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "persona", schema = "seguridad")
+@Table(name = "rol", schema = "seguridad")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PersonaEntity {
+public class RolEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "personaid")
-    private Long personaId;
+    @Column(name = "rolid")
+    private Long rolId;
 
-    @Column(name = "apellidopaterno", nullable = false, length = 100)
-    private String apellidoPaterno;
-
-    @Column(name = "apellidomaterno", nullable = false, length = 100)
-    private String apellidoMaterno;
-
-    @Column(name = "nombres", nullable = false, length = 100)
-    private String nombre;
-
-    @Column(name = "tipodocumentoidentidad", nullable = false, length = 6)
-    private String tipoDocumentoIdentidad;
-
-    @Column(name = "numerodocumentoidentidad", nullable = false, length = 20, unique = true)
-    private String numeroDocumentoIdentidad;
+    @Column(name = "denominacion", nullable = false, length = 100)
+    private String denominacion;
 
     @Column(name = "estado", nullable = false)
     private int estado;
@@ -49,5 +37,6 @@ public class PersonaEntity {
     private LocalDateTime fechaCreacion;
 
     @Column(name = "eliminado", nullable = false)
-    private Boolean eliminado;
+    private Boolean eliminado = Boolean.FALSE;
+
 }
