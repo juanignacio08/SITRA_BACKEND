@@ -15,4 +15,5 @@ public interface RolService {
 
     RolEntity getRol(Long id);
     List<RolEntity> getRols();
+    boolean existsRol(Long id);
 }

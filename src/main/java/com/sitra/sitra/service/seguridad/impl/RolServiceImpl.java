@@ -60,8 +60,18 @@ public class RolServiceImpl implements RolService {
     }
 
     @Override
+    @Transactional
     public RolResponse update(RolRequest request) {
-        return null;
+        context = "updateRol";
+        log.info("Actualizando un rol. [ ROL : {} | CONTEXTO : {} ]", request.getRolId(), context);
+
+        RolEntity entity = getRol(request.getRolId());
+
+        RolRequest.toUpdate(request, entity);
+
+        RolEntity save = rolRepository.save(entity);
+
+        return RolResponse.toResponse.apply(save);
     }
 
     @Override
@@ -80,5 +90,12 @@ public class RolServiceImpl implements RolService {
     @Override
     public List<RolEntity> getRols() {
         return rolRepository.getRols();
+    }
+
+    @Override
+    public boolean existsRol(Long id) {
+        if (id == null || id < 1) throw new BadRequestException("Id incorrecto. [ ROL ]");
+
+        return rolRepository.existsRol(id);
     }
 }
