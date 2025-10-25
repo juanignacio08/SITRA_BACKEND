@@ -1,7 +1,9 @@
 package com.sitra.sitra.service.seguridad.impl;
 
+import com.sitra.sitra.entity.seguridad.RolEntity;
 import com.sitra.sitra.expose.request.seguridad.RolRequest;
 import com.sitra.sitra.expose.response.seguridad.RolResponse;
+import com.sitra.sitra.repository.seguridad.RolRepository;
 import com.sitra.sitra.service.seguridad.RolService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +16,21 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = @__(@Autowired))
 public class RolServiceImpl implements RolService {
+
+    private final RolRepository rolRepository;
+
+    private String context;
+
     @Override
     public RolResponse save(RolRequest request) {
-        return null;
+        context = "saveRol";
+        log.info("Registrando un nuevo rol. [ CONTEXTO : {} ]", context);
+
+        RolEntity entity = RolRequest.toEntity.apply(request);
+
+        RolEntity save = rolRepository.save(entity);
+
+        return RolResponse.toResponse.apply(save);
     }
 
     @Override
