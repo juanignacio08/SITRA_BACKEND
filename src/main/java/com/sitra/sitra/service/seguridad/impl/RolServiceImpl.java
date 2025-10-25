@@ -49,7 +49,14 @@ public class RolServiceImpl implements RolService {
 
     @Override
     public List<RolResponse> getList() {
-        return List.of();
+        context = "getRols";
+        log.info("Buscando roles. [ CONTEXTO : {} ]", context);
+
+        List<RolEntity> list = getRols();
+
+        return list.stream()
+                .map(RolResponse.toResponse)
+                .toList();
     }
 
     @Override
@@ -68,5 +75,10 @@ public class RolServiceImpl implements RolService {
 
         return rolRepository.getByID(id)
                 .orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ ROL ]"));
+    }
+
+    @Override
+    public List<RolEntity> getRols() {
+        return rolRepository.getRols();
     }
 }

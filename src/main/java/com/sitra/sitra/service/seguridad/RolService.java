@@ -14,4 +14,5 @@ public interface RolService {
     RolResponse delete(Long id);
 
     RolEntity getRol(Long id);
+    List<RolEntity> getRols();
 }
