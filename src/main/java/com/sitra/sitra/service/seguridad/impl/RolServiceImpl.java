@@ -5,6 +5,7 @@ import com.sitra.sitra.exceptions.BadRequestException;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.seguridad.RolRequest;
 import com.sitra.sitra.expose.response.seguridad.RolResponse;
+import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.repository.seguridad.RolRepository;
 import com.sitra.sitra.service.seguridad.RolService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -75,8 +77,19 @@ public class RolServiceImpl implements RolService {
     }
 
     @Override
+    @Transactional
     public RolResponse delete(Long id) {
-        return null;
+        context = "deleteRol";
+        log.info("Eliminando rol. [ ROL : {} | CONTEXTO : {} ]", id, context);
+
+        RolEntity entity = getRol(id);
+        entity.setEliminado(true);
+        entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
+        entity.setFechaActualizacion(LocalDateTime.now());
+
+        RolEntity save = rolRepository.save(entity);
+
+        return RolResponse.toResponse.apply(save);
     }
 
     @Override
