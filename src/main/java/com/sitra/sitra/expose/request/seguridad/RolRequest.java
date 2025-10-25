@@ -39,5 +39,12 @@ public class RolRequest {
             .eliminado(false)
             .build();
 
+    public static void toUpdate(RolRequest request, RolEntity entity) {
+        entity.setDenominacion(request.getDenominacion());
+        entity.setEstado(request.getEstado());
+        entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
+        entity.setFechaActualizacion(LocalDateTime.now());
+    }
+
 
 }
