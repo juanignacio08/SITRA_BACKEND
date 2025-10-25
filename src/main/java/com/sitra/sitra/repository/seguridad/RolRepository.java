@@ -15,9 +15,9 @@ public interface RolRepository extends JpaRepository<RolEntity, Long> {
         return findByRolIdAndEliminado(id, false);
     }
 
-    List<RolEntity> findByEliminado(boolean eliminado);
+    List<RolEntity> findByEliminadoOrderByRolIdAsc(boolean eliminado);
     default List<RolEntity> getRols() {
-        return findByEliminado(false);
+        return findByEliminadoOrderByRolIdAsc(false);
     }
 
     boolean existsByRolIdAndEliminado(Long id, boolean eliminado);
