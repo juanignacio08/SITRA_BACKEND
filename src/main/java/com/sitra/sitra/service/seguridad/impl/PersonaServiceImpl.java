@@ -96,4 +96,12 @@ public class PersonaServiceImpl implements PersonaService {
                 .orElseThrow(() -> new NotFoundException("Registro no encontrado [ PERSONA ]"));
     }
 
+    @Override
+    public PersonaEntity getPersonByID(Long id) {
+        if (id == null || id < 1) throw new BadRequestException("Id incorrecto. [ Persona ]");
+
+        return personaRepository.getByID(id)
+                .orElseThrow(() -> new NotFoundException("Registro no encontrado [ PERSONA ]"));
+    }
+
 }

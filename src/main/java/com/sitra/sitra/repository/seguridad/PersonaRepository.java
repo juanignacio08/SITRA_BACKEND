@@ -19,4 +19,9 @@ public interface PersonaRepository extends JpaRepository<PersonaEntity, Long> {
         return findByNumeroDocumentoIdentidadAndEliminado(numberDocument, false);
     }
 
+    Optional<PersonaEntity> findByPersonaIdAndEliminado(Long id, Boolean eliminado);
+    default Optional<PersonaEntity> getByID(Long id) {
+        return findByPersonaIdAndEliminado(id, false);
+    }
+
 }

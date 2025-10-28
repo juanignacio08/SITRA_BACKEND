@@ -15,4 +15,5 @@ public interface UsuarioService {
 
     UsuarioEntity getUser(Long id);
     List<UsuarioEntity> getUsers();
+    boolean existsUserByNumberDocument(String email);
 }

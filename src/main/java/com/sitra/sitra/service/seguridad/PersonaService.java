@@ -11,4 +11,5 @@ public interface PersonaService {
     PersonaResponse deleteByNumberDocument(String numberDocument);
     boolean existsByNumberDocument(String numberDocument);
     PersonaEntity getPersonByNumberDocument(String numberDocument);
+    PersonaEntity getPersonByID(Long id);
 }

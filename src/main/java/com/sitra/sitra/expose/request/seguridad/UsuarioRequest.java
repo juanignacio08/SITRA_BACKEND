@@ -1,6 +1,7 @@
 package com.sitra.sitra.expose.request.seguridad;
 
 import com.sitra.sitra.entity.seguridad.UsuarioEntity;
+import com.sitra.sitra.expose.util.PasswordUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +26,7 @@ public class UsuarioRequest {
 
     @NotBlank(message = "El usuario es requerido")
     @Size(max = 100, message = "El usuario debe tener menos de 100 caracteres")
-    private String usuario;
+    private String numeroDocumento;
 
     @NotBlank(message = "La contraseña es requerido")
     private String contrasena;
@@ -34,15 +35,11 @@ public class UsuarioRequest {
     @Min(value = 1, message = "El id del rol no debe de ser menor a 1")
     private Long rolId;
 
-    @NotNull(message = "El id de la persona es requerido.")
-    @Min(value = 1, message = "El id de la persona no debe de ser menor a 1")
-    private Long personaId;
-
     private int estado;
 
     public static final Function<UsuarioRequest, UsuarioEntity> toEntity = request -> UsuarioEntity.builder()
-            .usuario(request.getUsuario())
-            .contrasena(request.getContrasena())
+            .usuario(request.getNumeroDocumento())
+            .contrasena(PasswordUtil.encriptar(request.getContrasena()))
             .estado(1)
             .actualizadoPor(SecurityUtil.getCurrentUserId())
             .fechaActualizacion(LocalDateTime.now())
@@ -50,4 +47,11 @@ public class UsuarioRequest {
             .fechaCreacion(LocalDateTime.now())
             .eliminado(false)
             .build();
+
+    public static void toUpdate(UsuarioRequest request, UsuarioEntity entity) {
+        entity.setContrasena(PasswordUtil.encriptar(request.getContrasena()));
+        entity.setEstado(request.getEstado());
+        entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
+        entity.setFechaActualizacion(LocalDateTime.now());
+    }
 }
