@@ -22,6 +22,11 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
         return findByUsuarioIdAndEliminado(userId, false);
     }
 
+    Optional<UsuarioEntity> findByUsuarioAndEliminado(String user, boolean eliminado);
+    default Optional<UsuarioEntity> getByUser(String user) {
+        return findByUsuarioAndEliminado(user, false);
+    }
+
     @EntityGraph(attributePaths = {"rol", "persona"})
     List<UsuarioEntity> findByEliminado(boolean eliminado);
     default List<UsuarioEntity> getUsers() {

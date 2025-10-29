@@ -85,4 +85,16 @@ public class UsuarioController {
             throw e;
         }
     }
+
+    @GetMapping("/getUsuarioByUserAndPassword")
+    public ResponseEntity<ResponseDTO<Object>> getByUserAndPassword(@RequestParam(name = "user") String user, @RequestParam(name = "password") String password) {
+        try {
+            UsuarioResponse response = usuarioService.sigIn(user, password);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo usuario!");
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getByUserAndPassword: {}", e.getMessage());
+            throw e;
+        }
+    }
 }

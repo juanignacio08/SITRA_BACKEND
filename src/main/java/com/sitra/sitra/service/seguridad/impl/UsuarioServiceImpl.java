@@ -8,6 +8,7 @@ import com.sitra.sitra.exceptions.DuplicateKeyError;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.seguridad.UsuarioRequest;
 import com.sitra.sitra.expose.response.seguridad.UsuarioResponse;
+import com.sitra.sitra.expose.util.PasswordUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.repository.seguridad.UsuarioRepository;
 import com.sitra.sitra.service.seguridad.PersonaService;
@@ -60,7 +61,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         UsuarioEntity entity = getUser(id);
 
-        return UsuarioResponse.toResponse.apply(entity);
+        return UsuarioResponse.toResponseDetail.apply(entity);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         List<UsuarioEntity> list = getUsers();
 
         return list.stream()
-                .map(UsuarioResponse.toResponse)
+                .map(UsuarioResponse.toResponseDetail)
                 .toList();
     }
 
@@ -82,6 +83,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         log.info("Actualizando el registro de un usuario. [ USUARIO : {} | CONTEXTO : {} ]", request.getUsuarioId(), context);
 
         UsuarioEntity entity = getUser(request.getUsuarioId());
+
+        UsuarioRequest.toUpdate(request, entity);
 
         RolEntity rol = rolService.getRol(request.getRolId());
 
@@ -109,10 +112,28 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public UsuarioResponse sigIn(String user, String password) {
+        context = "getByUserAndPassword";
+        log.info("Obteniendo un usuario por Email y Password. [ USER : {} | PASSWORD : {} | CONTEXTO : {} ]", user, password, context);
+
+        UsuarioEntity entity = getUserByUser(user);
+
+        if (!PasswordUtil.comparar(password, entity.getContrasena())) throw new NotFoundException("Usuario no encontrado.");
+
+        return UsuarioResponse.toResponse.apply(entity);
+    }
+
+    @Override
     public UsuarioEntity getUser(Long id) {
         if (id == null || id < 1) throw new BadRequestException("Id incorrecto. [ Usuario ]");
 
         return usuarioRepository.getDetailByID(id)
+                .orElseThrow(() -> new NotFoundException("Registro no encontrado. [ Usuario ]"));
+    }
+
+    @Override
+    public UsuarioEntity getUserByUser(String user) {
+        return usuarioRepository.getByUser(user)
                 .orElseThrow(() -> new NotFoundException("Registro no encontrado. [ Usuario ]"));
     }
 

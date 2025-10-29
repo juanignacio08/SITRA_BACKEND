@@ -12,8 +12,10 @@ public interface UsuarioService {
     List<UsuarioResponse> getList();
     UsuarioResponse update(UsuarioRequest request);
     UsuarioResponse delete(Long id);
+    UsuarioResponse sigIn(String user, String password);
 
     UsuarioEntity getUser(Long id);
+    UsuarioEntity getUserByUser(String user);
     List<UsuarioEntity> getUsers();
     boolean existsUserByNumberDocument(String email);
 }
