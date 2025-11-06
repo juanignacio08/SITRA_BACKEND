@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -23,6 +25,35 @@ import java.util.List;
 public class TablaMaestraServiceImpl implements TablaMaestraService {
 
     private final TablaMaestraRepository tablaMaestraRepository;
+
+    public static Map<String, String> tablePreferential = new HashMap<>(Map.of(
+            "NORMAL", "001001",
+            "PREFERENCIAL", "001002",
+            "URGENTE", "001003"
+    ));
+
+    public static final String NORMAL = "001001";
+    public static final String PREFERENCIAL = "001002";
+    public static final String URGENTE = "001003";
+
+    public static Map<String, String> tableOrderAttentionStatus = new HashMap<>(Map.of(
+            "PENDIENTE", "002001",
+            "EN_LLAMADA", "002002",
+            "ATENDIDO", "002003",
+            "AUSENTE", "002004",
+            "ATENDIENDO", "002005"
+    ));
+
+    public static final String PENDIENTE = "002001";
+    public static final String EN_LLAMADA = "002002";
+    public static final String ATENDIDO = "002003";
+    public static final String AUSENTE = "002004";
+    public static final String ATENDIENDO = "002005";
+
+    public static Map<String, String> tableCodeVentanilla = new HashMap<>(Map.of(
+            "VENTANILLA_1", "003001",
+            "VENTANILLA_2", "003002"
+    ));
 
     private String context;
 
@@ -90,6 +121,11 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
 
         return "Tabla Maestra con id " + id + " fue eliminado.";
 
+    }
+
+    @Override
+    public TablaMaestraEntity getByCodeRegister(String code) {
+        return getItemByCode(code);
     }
 
     private TablaMaestraEntity getById(Long id) {

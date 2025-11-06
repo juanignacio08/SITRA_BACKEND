@@ -1,5 +1,6 @@
 package com.sitra.sitra.service.maestros;
 
+import com.sitra.sitra.entity.maestros.TablaMaestraEntity;
 import com.sitra.sitra.expose.request.maestros.TablaMaestraRequest;
 import com.sitra.sitra.expose.response.maestros.TablaMaestraResponse;
 
@@ -11,4 +12,6 @@ public interface TablaMaestraService {
     TablaMaestraResponse getByCode(String code);
     TablaMaestraResponse update(TablaMaestraRequest request);
     String delete(Long id);
+
+    TablaMaestraEntity getByCodeRegister(String code);
 }
