@@ -55,21 +55,24 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
             case TablaMaestraServiceImpl.NORMAL -> {
                 List<OrdenAtencionEntity> list = ordenAtencionRepository.getByCodeStatusAndCodePrio(
                         TablaMaestraServiceImpl.PENDIENTE,
-                        TablaMaestraServiceImpl.NORMAL
+                        TablaMaestraServiceImpl.NORMAL,
+                        entity.getFecha()
                 );
                 yield list.isEmpty() ? 1 : list.getLast().getTurno() + 1;
             }
             case TablaMaestraServiceImpl.PREFERENCIAL -> {
                 List<OrdenAtencionEntity> list = ordenAtencionRepository.getByCodeStatusAndCodePrio(
                         TablaMaestraServiceImpl.PENDIENTE,
-                        TablaMaestraServiceImpl.PREFERENCIAL
+                        TablaMaestraServiceImpl.PREFERENCIAL,
+                        entity.getFecha()
                 );
                 yield list.isEmpty() ? 1 : list.getLast().getTurno() + 1;
             }
             case TablaMaestraServiceImpl.URGENTE -> {
                 List<OrdenAtencionEntity> list = ordenAtencionRepository.getByCodeStatusAndCodePrio(
                         TablaMaestraServiceImpl.PENDIENTE,
-                        TablaMaestraServiceImpl.URGENTE
+                        TablaMaestraServiceImpl.URGENTE,
+                        entity.getFecha()
                 );
                 yield list.isEmpty() ? 1 : list.getLast().getTurno() + 1;
             }

@@ -13,9 +13,9 @@ import java.util.Optional;
 
 @Repository
 public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEntity, Long> {
-    List<OrdenAtencionEntity> findByCodEstadoAtencionAndCodPrioridadAndEstadoAndEliminadoOrderByTurnoAsc(String codeStatus, String codePreferential, int estado, boolean eliminado);
-    default List<OrdenAtencionEntity> getByCodeStatusAndCodePrio(String codeStatus, String codePreferential) {
-        return findByCodEstadoAtencionAndCodPrioridadAndEstadoAndEliminadoOrderByTurnoAsc(codeStatus, codePreferential, 1, false);
+    List<OrdenAtencionEntity> findByCodEstadoAtencionAndCodPrioridadAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(String codeStatus, String codePreferential, LocalDate date, int estado, boolean eliminado);
+    default List<OrdenAtencionEntity> getByCodeStatusAndCodePrio(String codeStatus, String codePreferential, LocalDate date) {
+        return findByCodEstadoAtencionAndCodPrioridadAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(codeStatus, codePreferential, date, 1, false);
     }
 
     @EntityGraph(attributePaths = {"persona"})
