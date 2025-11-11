@@ -39,16 +39,16 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
     public static Map<String, String> tableOrderAttentionStatus = new HashMap<>(Map.of(
             "PENDIENTE", "002001",
             "EN_LLAMADA", "002002",
-            "ATENDIDO", "002003",
+            "ATENDIENDO", "002003",
             "AUSENTE", "002004",
-            "ATENDIENDO", "002005"
+            "ATENDIDO", "002005"
     ));
 
     public static final String PENDIENTE = "002001";
     public static final String EN_LLAMADA = "002002";
-    public static final String ATENDIDO = "002003";
+    public static final String ATENDIENDO = "002003";
     public static final String AUSENTE = "002004";
-    public static final String ATENDIENDO = "002005";
+    public static final String ATENDIDO = "002005";
 
     public static Map<String, String> tableCodeVentanilla = new HashMap<>(Map.of(
             "VENTANILLA_1", "003001",
@@ -78,7 +78,6 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
         log.info("Buscando items de una tabla, en tabla maestra. [ CODIGOTABLA : {} | CONTEXT : {} ]", codeTable, context);
 
         List<TablaMaestraEntity> list = tablaMaestraRepository.getItems(codeTable);
-
         return list.stream().map(TablaMaestraResponse.toResponse).toList();
     }
 
