@@ -43,13 +43,13 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
         log.info("Registrando un nuevo orden de atencion. [ CONTEXTO : {} ]", context);
 
         PersonaEntity person = personaService.getPersonByID(request.getPersonaId());
-        UsuarioEntity user = usuarioService.getUser(request.getUsuarioId());
+        UsuarioEntity user = usuarioService.getUser(request.getReceptorId());
 
         if (!TablaMaestraServiceImpl.tablePreferential.containsValue(request.getCodPrioridad())) throw new NotFoundException("Recurso no encontrado. [ TABLA_PRIORIDAD ]");
 
         OrdenAtencionEntity entity = OrdenAtencionRequest.toEntity.apply(request);
         entity.setPersona(person);
-        entity.setUsuario(user);
+        entity.setReceptor(user);
 
         Integer turno = switch (entity.getCodPrioridad()) {
             case TablaMaestraServiceImpl.NORMAL -> {
@@ -94,6 +94,15 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
         log.info("Actualizando una orden de atencion. [ ORDENATENCION : {} | CONTEXTO : {} ]", request.getOrdenAtencionId(), context);
 
         OrdenAtencionEntity entity = getOrdenById(request.getOrdenAtencionId());
+        if (!TablaMaestraServiceImpl.tableOrderAttentionStatus.containsValue(request.getCodEstadoAtencion())) throw new BadRequestException("El codigo de estado de atencion no esta disponible.");
+        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(request.getCodVentanilla())) throw new BadRequestException("Ventanilla no disponible.");
+
+        UsuarioEntity asesor = null;
+
+        if (!request.getCodEstadoAtencion().equals(TablaMaestraServiceImpl.PENDIENTE)) {
+            asesor = usuarioService.getUser(request.getAsesorId());
+            entity.setAsesor(asesor);
+        }
 
         OrdenAtencionRequest.toUpdate(request, entity);
 

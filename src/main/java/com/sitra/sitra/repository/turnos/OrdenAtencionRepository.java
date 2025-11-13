@@ -29,7 +29,7 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
         return findByOrdenAtencionIdAndEstadoAndEliminado(id, 1, false);
     }
 
-    @EntityGraph(attributePaths = {"persona", "usuario.persona", "usuario.rol"})
+    @EntityGraph(attributePaths = {"persona", "receptor.persona", "receptor.rol", "asesor.persona", "asesor.rol"})
     Optional<OrdenAtencionEntity> findByOrdenAtencionIdAndEstadoAndEliminadoEquals(Long id, int estado, boolean eliminado);
     default Optional<OrdenAtencionEntity> getDetailActiveByID(Long id) {
         return findByOrdenAtencionIdAndEstadoAndEliminadoEquals(id, 1, false);

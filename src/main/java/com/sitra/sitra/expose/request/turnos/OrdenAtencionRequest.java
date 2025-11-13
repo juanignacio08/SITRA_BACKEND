@@ -33,9 +33,12 @@ public class OrdenAtencionRequest {
     @Min(value = 1, message = "El idPersona no debe de ser menor a 1")
     private Long personaId;
 
-    @NotNull(message = "El idUsuario es requerido.")
-    @Min(value = 1, message = "El idUsuario no debe de ser menor a 1")
-    private Long usuarioId;
+    @NotNull(message = "El idReceptor es requerido.")
+    @Min(value = 1, message = "El idReceptor no debe de ser menor a 1")
+    private Long receptorId;
+
+    @Min(value = 1, message = "El idAsesor no debe de ser menor a 1")
+    private Long asesorId;
 
     @Size(min = 6, max = 6, message = "El codigo de prioridad debe tener exactamente 6 caracteres")
     private String codPrioridad;

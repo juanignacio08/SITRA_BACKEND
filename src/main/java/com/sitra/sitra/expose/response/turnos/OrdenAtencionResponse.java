@@ -19,7 +19,8 @@ import java.util.function.Function;
 public class OrdenAtencionResponse {
     private Long ordenAtencionId;
     private PersonaResponse persona;
-    private UsuarioResponse usuario;
+    private UsuarioResponse receptor;
+    private UsuarioResponse asesor;
     private String fecha;
     private LocalTime hora;
     private String codPrioridad;
@@ -34,8 +35,11 @@ public class OrdenAtencionResponse {
             .persona(PersonaResponse.builder()
                     .personaId(entity.getPersona().getPersonaId())
                     .build())
-            .usuario(UsuarioResponse.builder()
-                    .usuarioId(entity.getUsuario().getUsuarioId())
+            .receptor(UsuarioResponse.builder()
+                    .usuarioId(entity.getReceptor().getUsuarioId())
+                    .build())
+            .asesor(UsuarioResponse.builder()
+                    .usuarioId(entity.getAsesor() != null ? entity.getAsesor().getUsuarioId(): null)
                     .build())
             .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(entity.getFecha()))
             .hora(entity.getHora())
@@ -50,10 +54,12 @@ public class OrdenAtencionResponse {
     public static final Function<OrdenAtencionEntity, OrdenAtencionResponse> toResponseDetailPerson = entity -> OrdenAtencionResponse.builder()
             .ordenAtencionId(entity.getOrdenAtencionId())
             .persona(PersonaResponse.toResponse.apply(entity.getPersona()))
-            .usuario(UsuarioResponse.builder()
-                    .usuarioId(entity.getUsuario().getUsuarioId())
-                    .estado(1)
+            .receptor(UsuarioResponse.builder()
+                    .usuarioId(entity.getReceptor().getUsuarioId())
                     .build())
+            .asesor(entity.getAsesor() != null ? UsuarioResponse.builder()
+                    .usuarioId(entity.getAsesor().getUsuarioId())
+                    .build() : null)
             .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(entity.getFecha()))
             .hora(entity.getHora())
             .codPrioridad(entity.getCodPrioridad())
@@ -67,7 +73,8 @@ public class OrdenAtencionResponse {
     public static final Function<OrdenAtencionEntity, OrdenAtencionResponse> toResponseDetail = entity -> OrdenAtencionResponse.builder()
             .ordenAtencionId(entity.getOrdenAtencionId())
             .persona(PersonaResponse.toResponse.apply(entity.getPersona()))
-            .usuario(UsuarioResponse.toResponseDetail.apply(entity.getUsuario()))
+            .receptor(UsuarioResponse.toResponseDetail.apply(entity.getReceptor()))
+            .asesor(entity.getAsesor() != null ? UsuarioResponse.toResponseDetail.apply(entity.getAsesor()) : null)
             .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(entity.getFecha()))
             .hora(entity.getHora())
             .codPrioridad(entity.getCodPrioridad())

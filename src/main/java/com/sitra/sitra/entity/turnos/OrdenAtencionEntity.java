@@ -28,8 +28,12 @@ public class OrdenAtencionEntity {
     private PersonaEntity persona;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuarioid", nullable = false)
-    private UsuarioEntity usuario;
+    @JoinColumn(name = "receptorid", nullable = false)
+    private UsuarioEntity receptor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asesorid")
+    private UsuarioEntity asesor;
 
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
