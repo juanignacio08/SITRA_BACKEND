@@ -11,6 +11,7 @@ import java.util.List;
 public interface OrdenAtencionService {
     OrdenAtencionResponse save(OrdenAtencionRequest request);
     OrdenAtencionResponse update(OrdenAtencionRequest request);
+    OrdenAtencionResponse callNext(String date, String codePriority, String codeVentanilla, Long asesorId);
     Page<OrdenAtencionResponse> getPagedAttentionOrdersNormalsInPendingStatus(int page, int size, String date);
     Page<OrdenAtencionResponse> getPagedAttentionOrdersPreferentialInPendingStatus(int page, int size, String date);
     List<OrdenAtencionResponse> getAttentionOrderInCallsStatus(String date);

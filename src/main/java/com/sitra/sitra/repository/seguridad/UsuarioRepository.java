@@ -22,6 +22,11 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
         return findByUsuarioIdAndEliminado(userId, false);
     }
 
+    Optional<UsuarioEntity> findByUsuarioIdAndEliminadoEquals(Long userId, boolean eliminado);
+    default Optional<UsuarioEntity> getByID(Long userId) {
+        return findByUsuarioIdAndEliminadoEquals(userId, false);
+    }
+
     Optional<UsuarioEntity> findByUsuarioAndEliminado(String user, boolean eliminado);
     default Optional<UsuarioEntity> getByUser(String user) {
         return findByUsuarioAndEliminado(user, false);

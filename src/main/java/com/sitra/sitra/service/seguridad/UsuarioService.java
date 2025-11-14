@@ -14,6 +14,7 @@ public interface UsuarioService {
     UsuarioResponse delete(Long id);
     UsuarioResponse sigIn(String user, String password);
 
+    UsuarioEntity getUserDetail(Long id);
     UsuarioEntity getUser(Long id);
     UsuarioEntity getUserByUser(String user);
     List<UsuarioEntity> getUsers();

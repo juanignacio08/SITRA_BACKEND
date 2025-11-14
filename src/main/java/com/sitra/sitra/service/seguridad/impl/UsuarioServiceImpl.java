@@ -59,7 +59,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         context = "getUserById";
         log.info("Buscando un usuario. [ USER : {} | CONTEXTO : {} ]", id, context);
 
-        UsuarioEntity entity = getUser(id);
+        UsuarioEntity entity = getUserDetail(id);
 
         return UsuarioResponse.toResponseDetail.apply(entity);
     }
@@ -124,10 +124,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioEntity getUser(Long id) {
+    public UsuarioEntity getUserDetail(Long id) {
         if (id == null || id < 1) throw new BadRequestException("Id incorrecto. [ Usuario ]");
 
         return usuarioRepository.getDetailByID(id)
+                .orElseThrow(() -> new NotFoundException("Registro no encontrado. [ Usuario ]"));
+    }
+
+    @Override
+    public UsuarioEntity getUser(Long id) {
+        if (id == null || id < 1) throw new BadRequestException("Id incorrecto. [ Usuario ]");
+
+        return usuarioRepository.getByID(id)
                 .orElseThrow(() -> new NotFoundException("Registro no encontrado. [ Usuario ]"));
     }
 
