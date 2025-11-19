@@ -211,6 +211,21 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
     }
 
     @Override
+    public OrdenAtencionResponse getAttentionOrderInCallStatusByDateAndVentanilla(String date, String codeVentanilla) {
+        String context = "getAttentionOrderInCallStatus";
+        log.info("Obteniendo un orden de atencion que esta en llamada por fecha y ventanilla. [ FECHA : {} | VENTANILLA : {} | CONTEXTO : {} ]", date, codeVentanilla, context);
+
+        LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
+
+        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(codeVentanilla)) throw new BusinessRuleException("Ventanilla no registrada.");
+
+        OrdenAtencionEntity entity = ordenAtencionRepository.getByCodeStatusAndDateAndCodeVentanilla(TablaMaestraServiceImpl.EN_LLAMADA, fecha, codeVentanilla)
+                .orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ OrdenAtencionEnLlamada : Ventanilla : " + codeVentanilla + " ]"));
+
+        return OrdenAtencionResponse.toResponseDetailPerson.apply(entity);
+    }
+
+    @Override
     public List<OrdenAtencionResponse> getListByDate(String fecha) {
         return List.of();
     }

@@ -125,6 +125,22 @@ public class OrdenAtencionController {
         }
     }
 
+    @GetMapping("/getAttentionOrderInCallStatusByDateAndVentanilla")
+    public ResponseEntity<ResponseDTO<Object>> getAttentionOrderInCallStatusByDateAndVentanilla(
+            @RequestParam(name = "date") String date,
+            @RequestParam(name = "codeVentanilla") String codeVentanilla
+    ) {
+        try {
+            OrdenAtencionResponse response = ordenAtencionService.getAttentionOrderInCallStatusByDateAndVentanilla(date, codeVentanilla);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo Orden de atencion en estado llamando de una ventanilla!");
+            log.info("Obteniendo Orden de Atencion en estado llamando de una ventanilla [ FECHA : {} | VENTANILLA : {} ]", date, codeVentanilla);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getAttentionOrderInCallStatusByDateAndVentanilla: {}", e.getMessage());
+            throw e;
+        }
+    }
+
     @GetMapping("/getById")
     public ResponseEntity<ResponseDTO<Object>> getById(@RequestParam(name = "id") Long id) {
         try {
