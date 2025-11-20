@@ -32,7 +32,6 @@ public class AtencionRequest {
     @Min(value = 1, message = "El id de orden de atención no debe ser menor a 1")
     private Long ordenAtencionId;
 
-    @NotNull(message = "La fecha es requerida.")
     private LocalDate fecha;
 
     @NotNull(message = "La hora de inicio es requerida.")
@@ -54,7 +53,7 @@ public class AtencionRequest {
     private Integer estado;
 
     public static final Function<AtencionRequest, AtencionEntity> toEntity = request -> AtencionEntity.builder()
-            .fecha(request.getFecha())
+            .fecha(LocalDate.now())
             .horaInicio(request.getHoraInicio())
             .horaFin(request.getHoraFin())
             .codVentanilla(request.getCodVentanilla())
