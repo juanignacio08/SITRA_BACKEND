@@ -25,7 +25,7 @@ public class AtencionEntity {
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
-    @Column(name = "horainicio", nullable = false)
+    @Column(name = "horainicio")
     private LocalTime horaInicio;
 
     @Column(name = "horafin", nullable = false)
