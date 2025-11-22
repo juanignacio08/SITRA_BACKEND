@@ -104,10 +104,40 @@ public class LlamadaServiceImpl implements LlamadaService {
     }
 
     @Override
+    public LlamadaResponse markAsAbsent(Long llamadaId) {
+        String context = "markAsAbsentLLamadaAndOrder";
+        log.info("Marcar como no presentado y ausente una llamada y orden. [ LLAMADA : {} | CONTEXTO : {} ]", llamadaId, context);
+
+        LlamadaEntity entity = getWithOrderById(llamadaId);
+
+        if (!entity.getCodResultado().equals(TablaMaestraServiceImpl.PENDIENTE_LLAMADA)) throw new BusinessRuleException("Solo se puede dar como ausente una vez que la orden de atencion fue llamado.");
+        if (!entity.getNumLlamada().equals(3)) throw new BusinessRuleException("Solo se puede marcar como ausente cuando se le haya llamado tres veces");
+
+        entity.getOrdenAtencion().setCodEstadoAtencion(TablaMaestraServiceImpl.AUSENTE);
+        entity.getOrdenAtencion().setActualizadoPor(SecurityUtil.getCurrentUserId());
+        entity.getOrdenAtencion().setFechaActualizacion(LocalDateTime.now());
+
+        entity.setCodResultado(TablaMaestraServiceImpl.NO_RESPONDIO);
+        entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
+        entity.setFechaActualizacion(LocalDateTime.now());
+
+        LlamadaEntity updated = llamadaRepository.save(entity);
+
+        return LlamadaResponse.toResponse.apply(updated);
+    }
+
+    @Override
     public LlamadaEntity getByOrderAtention(Long orderAtentionId) {
         if (orderAtentionId == null || orderAtentionId < 1) throw new BadRequestException("Id Incorrecto. [ ORDEN ATENCION ]");
 
         return llamadaRepository.getByOrderAtention(orderAtentionId).orElseThrow(() -> new NotFoundException("Recurso no encontrado [ LLAMADA ]"));
+    }
+
+    @Override
+    public LlamadaEntity getWithOrderById(Long id) {
+        if (id == null || id < 1) throw new BadRequestException("Id Incorrecto. [ LLAMADA ]");
+
+        return llamadaRepository.getWithOrderByID(id).orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ LLAMADA ]"));
     }
 
     private LlamadaResponse saveByOrderAtentionAndAsesorAndVentanillaAndDate(OrdenAtencionEntity ordenAtencion, UsuarioEntity asesor, String codeVentanilla, LocalDate date) {
