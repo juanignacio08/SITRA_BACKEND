@@ -31,10 +31,6 @@ public class OrdenAtencionEntity {
     @JoinColumn(name = "receptorid", nullable = false)
     private UsuarioEntity receptor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "asesorid")
-    private UsuarioEntity asesor;
-
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
@@ -49,12 +45,6 @@ public class OrdenAtencionEntity {
 
     @Column(name = "codestadoatencion", nullable = false, length = 6)
     private String codEstadoAtencion;
-
-    @Column(name = "numllamadas", nullable = false)
-    private Integer numLlamadas;
-
-    @Column(name = "codventanilla", length = 6)
-    private String codVentanilla;
 
     @Column(name = "estado", nullable = false)
     private int estado;

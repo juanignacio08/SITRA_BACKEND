@@ -15,7 +15,6 @@ public interface OrdenAtencionService {
     Page<OrdenAtencionResponse> getPagedAttentionOrdersNormalsInPendingStatus(int page, int size, String date);
     Page<OrdenAtencionResponse> getPagedAttentionOrdersPreferentialInPendingStatus(int page, int size, String date);
     List<OrdenAtencionResponse> getAttentionOrderInCallsStatus(String date);
-    OrdenAtencionResponse getAttentionOrderInCallStatusByDateAndVentanilla(String date, String codeVentanilla);
     List<OrdenAtencionResponse> getListByDate(String date);
     OrdenAtencionResponse getById(Long id);
 

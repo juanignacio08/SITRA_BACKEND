@@ -9,7 +9,6 @@ import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.turnos.OrdenAtencionRequest;
 import com.sitra.sitra.expose.response.turnos.OrdenAtencionResponse;
 import com.sitra.sitra.expose.util.DateConvertUtil;
-import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.repository.turnos.OrdenAtencionRepository;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.PersonaService;
@@ -26,9 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -36,6 +33,7 @@ import java.util.Optional;
 public class OrdenAtencionServiceImpl implements OrdenAtencionService {
 
     private final OrdenAtencionRepository ordenAtencionRepository;
+
     private final PersonaService personaService;
     private final UsuarioService usuarioService;
 
@@ -98,14 +96,6 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
 
         OrdenAtencionEntity entity = getOrdenById(request.getOrdenAtencionId());
         if (!TablaMaestraServiceImpl.tableOrderAttentionStatus.containsValue(request.getCodEstadoAtencion())) throw new BadRequestException("El codigo de estado de atencion no esta disponible.");
-        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(request.getCodVentanilla())) throw new BadRequestException("Ventanilla no disponible.");
-
-        UsuarioEntity asesor;
-
-        if (!request.getCodEstadoAtencion().equals(TablaMaestraServiceImpl.PENDIENTE)) {
-            asesor = usuarioService.getUser(request.getAsesorId());
-            entity.setAsesor(asesor);
-        }
 
         OrdenAtencionRequest.toUpdate(request, entity);
 
@@ -115,52 +105,54 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
     }
 
     @Override
+    @Transactional
     public OrdenAtencionResponse callNext(String date, String codePriority, String codeVentanilla, Long asesorId) {
         String context = "callNextOrderAtention";
         log.info("LLamando al siguiente orden de atencion. [ DATE : {} | CODEPRIORITY : {} | CODEVENTANILLA : {} | ASESOR : {} | CONTEXTO : {} ]", date, codePriority, codeVentanilla, asesorId, context);
 
-        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(codeVentanilla)) throw new NotFoundException("Ventanilla no registrada.");
-        if (!TablaMaestraServiceImpl.tablePreferential.containsValue(codePriority)) throw new BusinessRuleException("Prioridad no registrada.");
-
-        LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
-
-        UsuarioEntity asesor = usuarioService.getUser(asesorId);
-
-        Optional<OrdenAtencionEntity> enLlamadaOpt =
-                ordenAtencionRepository.getByCodePriorityAndCodeStatusAndDateAndVentanilla(
-                        codePriority,
-                        TablaMaestraServiceImpl.EN_LLAMADA,
-                        fecha,
-                        codeVentanilla
-                );
-
-        OrdenAtencionEntity entity;
-
-        if (enLlamadaOpt.isPresent()) {
-            entity = enLlamadaOpt.get();
-            if (entity.getNumLlamadas() < 2) {
-                entity.setNumLlamadas(entity.getNumLlamadas() + 1);
-            } else {
-                entity.setNumLlamadas(3);
-                entity.setCodEstadoAtencion(TablaMaestraServiceImpl.AUSENTE);
-            }
-        } else {
-            entity = ordenAtencionRepository
-                    .getFirstOrderAtentionByTurno(codePriority, TablaMaestraServiceImpl.PENDIENTE, fecha)
-                    .orElseThrow(() -> new NotFoundException("No hay orden de atención para llamar."));
-
-            entity.setNumLlamadas(1);
-            entity.setCodEstadoAtencion(TablaMaestraServiceImpl.EN_LLAMADA);
-            entity.setCodVentanilla(codeVentanilla);
-            entity.setAsesor(asesor);
-        }
-
-        entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
-        entity.setFechaActualizacion(LocalDateTime.now());
-
-        ordenAtencionRepository.save(entity);
-
-        return OrdenAtencionResponse.toResponseDetailPerson.apply(entity);
+//        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(codeVentanilla)) throw new NotFoundException("Ventanilla no registrada.");
+//        if (!TablaMaestraServiceImpl.tablePreferential.containsValue(codePriority)) throw new BusinessRuleException("Prioridad no registrada.");
+//
+//        LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
+//
+//        UsuarioEntity asesor = usuarioService.getUser(asesorId);
+//
+//        Optional<OrdenAtencionEntity> enLlamadaOpt =
+//                ordenAtencionRepository.getByCodePriorityAndCodeStatusAndDateAndVentanilla(
+//                        codePriority,
+//                        TablaMaestraServiceImpl.EN_LLAMADA,
+//                        fecha,
+//                        codeVentanilla
+//                );
+//
+//        OrdenAtencionEntity entity;
+//
+//        if (enLlamadaOpt.isPresent()) {
+//            entity = enLlamadaOpt.get();
+//            if (entity.getNumLlamadas() < 2) {
+//                entity.setNumLlamadas(entity.getNumLlamadas() + 1);
+//            } else {
+//                entity.setNumLlamadas(3);
+//                entity.setCodEstadoAtencion(TablaMaestraServiceImpl.AUSENTE);
+//            }
+//        } else {
+//            entity = ordenAtencionRepository
+//                    .getFirstOrderAtentionByTurno(codePriority, TablaMaestraServiceImpl.PENDIENTE, fecha)
+//                    .orElseThrow(() -> new NotFoundException("No hay orden de atención para llamar."));
+//
+//            entity.setNumLlamadas(1);
+//            entity.setCodEstadoAtencion(TablaMaestraServiceImpl.EN_LLAMADA);
+//            entity.setCodVentanilla(codeVentanilla);
+//            entity.setAsesor(asesor);
+//        }
+//
+//        entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
+//        entity.setFechaActualizacion(LocalDateTime.now());
+//
+//        OrdenAtencionEntity saved = ordenAtencionRepository.save(entity);
+//
+//        return OrdenAtencionResponse.toResponseDetailPerson.apply(entity);
+        return null;
     }
 
     @Override
@@ -208,21 +200,6 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
         return list.stream()
                 .map(OrdenAtencionResponse.toResponseDetailPerson)
                 .toList();
-    }
-
-    @Override
-    public OrdenAtencionResponse getAttentionOrderInCallStatusByDateAndVentanilla(String date, String codeVentanilla) {
-        String context = "getAttentionOrderInCallStatus";
-        log.info("Obteniendo un orden de atencion que esta en llamada por fecha y ventanilla. [ FECHA : {} | VENTANILLA : {} | CONTEXTO : {} ]", date, codeVentanilla, context);
-
-        LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
-
-        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(codeVentanilla)) throw new BusinessRuleException("Ventanilla no registrada.");
-
-        OrdenAtencionEntity entity = ordenAtencionRepository.getByCodeStatusAndDateAndCodeVentanilla(TablaMaestraServiceImpl.EN_LLAMADA, fecha, codeVentanilla)
-                .orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ OrdenAtencionEnLlamada : Ventanilla : " + codeVentanilla + " ]"));
-
-        return OrdenAtencionResponse.toResponseDetailPerson.apply(entity);
     }
 
     @Override

@@ -29,7 +29,7 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
         return findByOrdenAtencionIdAndEstadoAndEliminado(id, 1, false);
     }
 
-    @EntityGraph(attributePaths = {"persona", "receptor.persona", "receptor.rol", "asesor.persona", "asesor.rol"})
+    @EntityGraph(attributePaths = {"persona", "receptor.persona", "receptor.rol"})
     Optional<OrdenAtencionEntity> findByOrdenAtencionIdAndEstadoAndEliminadoEquals(Long id, int estado, boolean eliminado);
     default Optional<OrdenAtencionEntity> getDetailActiveByID(Long id) {
         return findByOrdenAtencionIdAndEstadoAndEliminadoEquals(id, 1, false);
@@ -39,30 +39,6 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
     List<OrdenAtencionEntity> findByCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(String codeStatus, LocalDate date, int status, boolean deleted);
     default List<OrdenAtencionEntity> getByCodeStatusAndDate(String codeStatus, LocalDate date) {
         return findByCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(codeStatus, date, 1, false);
-    }
-
-    @EntityGraph(attributePaths = {"persona"})
-    Optional<OrdenAtencionEntity> findByCodEstadoAtencionAndFechaAndCodVentanillaAndEstadoAndEliminado(String codeStatus, LocalDate date, String codeVentanilla, int status, boolean deleted);
-    default Optional<OrdenAtencionEntity> getByCodeStatusAndDateAndCodeVentanilla(String codeStatus, LocalDate date, String codeVentanilla) {
-        return findByCodEstadoAtencionAndFechaAndCodVentanillaAndEstadoAndEliminado(codeStatus, date, codeVentanilla, 1, false);
-    }
-
-    @EntityGraph(attributePaths = {"persona"})
-    Optional<OrdenAtencionEntity> findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndCodVentanillaAndEstadoAndEliminadoOrderByTurnoAsc(String codePriority, String codeStatus, LocalDate date, String codeVentanilla, int status, boolean deleted);
-    default Optional<OrdenAtencionEntity> getByCodePriorityAndCodeStatusAndDateAndVentanilla(String codePriority, String codeStatus, LocalDate date, String codeVentanilla) {
-        return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndCodVentanillaAndEstadoAndEliminadoOrderByTurnoAsc(codePriority, codeStatus, date, codeVentanilla, 1, false);
-    }
-
-    @EntityGraph(attributePaths = {"persona"})
-    Optional<OrdenAtencionEntity> findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(
-            String codePriority,
-            String codeStatus,
-            LocalDate date,
-            int estado,
-            boolean eliminado
-    );
-    default Optional<OrdenAtencionEntity> getFirstOrderAtentionByTurno(String codePriority, String codeStatus, LocalDate date) {
-        return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(codePriority, codeStatus, date, 1, false);
     }
 
 }

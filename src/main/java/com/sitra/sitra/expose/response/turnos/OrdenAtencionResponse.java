@@ -20,14 +20,11 @@ public class OrdenAtencionResponse {
     private Long ordenAtencionId;
     private PersonaResponse persona;
     private UsuarioResponse receptor;
-    private UsuarioResponse asesor;
     private String fecha;
     private LocalTime hora;
     private String codPrioridad;
     private Integer turno;
     private String codEstadoAtencion;
-    private Integer numLlamadas;
-    private String codVentanilla;
     private int estado;
 
     public static final Function<OrdenAtencionEntity, OrdenAtencionResponse> toResponse = entity -> OrdenAtencionResponse.builder()
@@ -38,16 +35,11 @@ public class OrdenAtencionResponse {
             .receptor(UsuarioResponse.builder()
                     .usuarioId(entity.getReceptor().getUsuarioId())
                     .build())
-            .asesor(UsuarioResponse.builder()
-                    .usuarioId(entity.getAsesor() != null ? entity.getAsesor().getUsuarioId(): null)
-                    .build())
             .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(entity.getFecha()))
             .hora(entity.getHora())
             .codPrioridad(entity.getCodPrioridad())
             .turno(entity.getTurno())
             .codEstadoAtencion(entity.getCodEstadoAtencion())
-            .numLlamadas(entity.getNumLlamadas())
-            .codVentanilla(entity.getCodVentanilla())
             .estado(entity.getEstado())
             .build();
 
@@ -57,16 +49,11 @@ public class OrdenAtencionResponse {
             .receptor(UsuarioResponse.builder()
                     .usuarioId(entity.getReceptor().getUsuarioId())
                     .build())
-            .asesor(entity.getAsesor() != null ? UsuarioResponse.builder()
-                    .usuarioId(entity.getAsesor().getUsuarioId())
-                    .build() : null)
             .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(entity.getFecha()))
             .hora(entity.getHora())
             .codPrioridad(entity.getCodPrioridad())
             .turno(entity.getTurno())
             .codEstadoAtencion(entity.getCodEstadoAtencion())
-            .numLlamadas(entity.getNumLlamadas())
-            .codVentanilla(entity.getCodVentanilla())
             .estado(entity.getEstado())
             .build();
 
@@ -74,13 +61,11 @@ public class OrdenAtencionResponse {
             .ordenAtencionId(entity.getOrdenAtencionId())
             .persona(PersonaResponse.toResponse.apply(entity.getPersona()))
             .receptor(UsuarioResponse.toResponseDetail.apply(entity.getReceptor()))
-            .asesor(entity.getAsesor() != null ? UsuarioResponse.toResponseDetail.apply(entity.getAsesor()) : null)
             .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(entity.getFecha()))
             .hora(entity.getHora())
             .codPrioridad(entity.getCodPrioridad())
             .turno(entity.getTurno())
             .codEstadoAtencion(entity.getCodEstadoAtencion())
-            .numLlamadas(entity.getNumLlamadas())
             .estado(entity.getEstado())
             .build();
 
