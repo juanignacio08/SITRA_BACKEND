@@ -2,6 +2,7 @@ package com.sitra.sitra.expose.request.turnos;
 
 import com.sitra.sitra.entity.turnos.AtencionEntity;
 import com.sitra.sitra.exceptions.BadRequestException;
+import com.sitra.sitra.exceptions.BusinessRuleException;
 import com.sitra.sitra.expose.util.DateConvertUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
@@ -45,20 +46,13 @@ public class AtencionRequest {
 
     private String observacion;
 
-    @NotBlank(message = "El código de estado de atención es requerido.")
-    @Size(min = 6, max = 6, message = "El código de estado de atención debe tener exactamente 6 caracteres")
-    private String codEstadoAtencion;
-
     @NotNull(message = "El estado es requerido.")
     private Integer estado;
 
     public static final Function<AtencionRequest, AtencionEntity> toEntity = request -> AtencionEntity.builder()
             .fecha(LocalDate.now())
             .horaInicio(LocalTime.now())
-            .horaFin(request.getHoraFin())
             .codVentanilla(request.getCodVentanilla())
-            .observacion(request.getObservacion())
-            .codEstadoAtencion(request.getCodEstadoAtencion())
             .estado(request.getEstado())
             .actualizadoPor(SecurityUtil.getCurrentUserId())
             .fechaActualizacion(LocalDateTime.now())
@@ -68,25 +62,9 @@ public class AtencionRequest {
             .build();
 
     public static void toUpdate(AtencionRequest request, AtencionEntity entity) {
-
-        entity.setCodEstadoAtencion(request.getCodEstadoAtencion());
-
-        if (!entity.getCodEstadoAtencion().equals(TablaMaestraServiceImpl.PENDIENTE)) {
-            if (request.getCodVentanilla() == null || request.getCodVentanilla().length() != 6)
-                throw new BadRequestException("Se requiere el código de la ventanilla");
-
-            if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(request.getCodVentanilla()))
-                throw new BadRequestException("Registro no encontrado. [ VENTANILLA ]");
-
-            entity.setCodVentanilla(request.getCodVentanilla());
-        }
-
-        entity.setFecha(DateConvertUtil.parseFechaDDMMYYYY(request.getFecha()));
-        entity.setHoraInicio(request.getHoraInicio());
         entity.setHoraFin(request.getHoraFin());
         entity.setObservacion(request.getObservacion());
         entity.setEstado(request.getEstado());
-
         entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
         entity.setFechaActualizacion(LocalDateTime.now());
     }

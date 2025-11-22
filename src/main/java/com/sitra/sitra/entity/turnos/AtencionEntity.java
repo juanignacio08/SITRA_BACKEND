@@ -45,9 +45,6 @@ public class AtencionEntity {
     @JoinColumn(name = "ordenatencionid", nullable = false)
     private OrdenAtencionEntity ordenAtencion;
 
-    @Column(name = "codestadoatencion", length = 6, nullable = false)
-    private String codEstadoAtencion;
-
     @Column(name = "estado", nullable = false)
     private int estado;
 

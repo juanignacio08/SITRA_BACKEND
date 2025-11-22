@@ -25,7 +25,6 @@ public class AtencionResponse {
     private LocalTime horaFin;
     private String codVentanilla;
     private String observacion;
-    private String codEstadoAtencion;
     private Integer estado;
 
     // -----------------------------------------
@@ -44,7 +43,6 @@ public class AtencionResponse {
             .horaFin(entity.getHoraFin())
             .codVentanilla(entity.getCodVentanilla())
             .observacion(entity.getObservacion())
-            .codEstadoAtencion(entity.getCodEstadoAtencion())
             .estado(entity.getEstado())
             .build();
 
@@ -63,7 +61,6 @@ public class AtencionResponse {
             .horaFin(entity.getHoraFin())
             .codVentanilla(entity.getCodVentanilla())
             .observacion(entity.getObservacion())
-            .codEstadoAtencion(entity.getCodEstadoAtencion())
             .estado(entity.getEstado())
             .build();
 
@@ -80,7 +77,6 @@ public class AtencionResponse {
             .horaFin(entity.getHoraFin())
             .observacion(entity.getObservacion())
             .codVentanilla(entity.getCodVentanilla())
-            .codEstadoAtencion(entity.getCodEstadoAtencion())
             .estado(entity.getEstado())
             .build();
 
