@@ -7,12 +7,14 @@ import com.sitra.sitra.exceptions.BadRequestException;
 import com.sitra.sitra.exceptions.BusinessRuleException;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.turnos.OrdenAtencionRequest;
+import com.sitra.sitra.expose.response.turnos.LlamadaResponse;
 import com.sitra.sitra.expose.response.turnos.OrdenAtencionResponse;
 import com.sitra.sitra.expose.util.DateConvertUtil;
 import com.sitra.sitra.repository.turnos.OrdenAtencionRepository;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.PersonaService;
 import com.sitra.sitra.service.seguridad.UsuarioService;
+import com.sitra.sitra.service.turnos.LlamadaService;
 import com.sitra.sitra.service.turnos.OrdenAtencionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,12 +106,12 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
         return OrdenAtencionResponse.toResponse.apply(saved);
     }
 
-    @Override
-    @Transactional
-    public OrdenAtencionResponse callNext(String date, String codePriority, String codeVentanilla, Long asesorId) {
-        String context = "callNextOrderAtention";
-        log.info("LLamando al siguiente orden de atencion. [ DATE : {} | CODEPRIORITY : {} | CODEVENTANILLA : {} | ASESOR : {} | CONTEXTO : {} ]", date, codePriority, codeVentanilla, asesorId, context);
-
+//    @Override
+//    @Transactional
+//    public OrdenAtencionResponse callNext(String date, String codePriority, String codeVentanilla, Long asesorId) {
+//        String context = "callNextOrderAtention";
+//        log.info("LLamando al siguiente orden de atencion. [ DATE : {} | CODEPRIORITY : {} | CODEVENTANILLA : {} | ASESOR : {} | CONTEXTO : {} ]", date, codePriority, codeVentanilla, asesorId, context);
+//
 //        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(codeVentanilla)) throw new NotFoundException("Ventanilla no registrada.");
 //        if (!TablaMaestraServiceImpl.tablePreferential.containsValue(codePriority)) throw new BusinessRuleException("Prioridad no registrada.");
 //
@@ -152,6 +154,38 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
 //        OrdenAtencionEntity saved = ordenAtencionRepository.save(entity);
 //
 //        return OrdenAtencionResponse.toResponseDetailPerson.apply(entity);
+//        return null;
+//    }
+
+    @Override
+    public OrdenAtencionResponse callNext(String date, String codePriority, String codeVentanilla, Long asesorId) {
+        String context = "callNextOrderAtention";
+        log.info("LLamando al siguiente orden de atencion. [ DATE : {} | CODEPRIORITY : {} | CODEVENTANILLA : {} | ASESOR : {} | CONTEXTO : {} ]", date, codePriority, codeVentanilla, asesorId, context);
+
+        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(codeVentanilla)) throw new NotFoundException("Ventanilla no registrada.");
+        if (!TablaMaestraServiceImpl.tablePreferential.containsValue(codePriority)) throw new BusinessRuleException("Prioridad no registrada.");
+
+        LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
+
+        UsuarioEntity asesor = usuarioService.getUser(asesorId);
+
+        //Verificar si existe alguien en llamada
+        OrdenAtencionEntity orderAtentionInCall = this.getOrderInCallStatus(codePriority, fecha);
+        OrdenAtencionEntity orderAtentionNext;
+
+        //Si existe, llamar ese mismo.
+        if (orderAtentionInCall != null) {
+            System.out.println("PPPP");
+        } else {
+            //Si no existe, llamar al primero de la lista y nume llamada = 1
+            orderAtentionNext = this.getNextOrderInPendingStatus(codePriority, fecha);
+            if (orderAtentionNext == null) return null;
+
+            orderAtentionNext.setCodEstadoAtencion(TablaMaestraServiceImpl.EN_LLAMADA);
+
+        }
+
+
         return null;
     }
 
@@ -230,6 +264,20 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
     @Override
     public List<OrdenAtencionEntity> getListByStatus(String codEstadoAtencion) {
         return List.of();
+    }
+
+    @Override
+    public OrdenAtencionEntity getOrderInCallStatus(String codePriority, LocalDate date) {
+        if (codePriority == null || codePriority.length() != 6) throw new BadRequestException("PriorityCode Incorrect. [ OrderAtention ]");
+
+        return ordenAtencionRepository.getOrderInCall(codePriority, date).orElse(null);
+    }
+
+    @Override
+    public OrdenAtencionEntity getNextOrderInPendingStatus(String codePriority, LocalDate date) {
+        if (codePriority == null || codePriority.length() != 6) throw new BadRequestException("PriorityCode Incorrect. [ OrderAtention ]");
+
+        return ordenAtencionRepository.getNextOrderPending(codePriority, date).orElse(null);
     }
 
 }

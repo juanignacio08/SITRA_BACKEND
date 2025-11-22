@@ -6,6 +6,7 @@ import com.sitra.sitra.entity.turnos.OrdenAtencionEntity;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.turnos.AtencionRequest;
 import com.sitra.sitra.expose.response.turnos.AtencionResponse;
+import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.repository.turnos.AtencionRepository;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.UsuarioService;
@@ -17,6 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Slf4j
 @Service

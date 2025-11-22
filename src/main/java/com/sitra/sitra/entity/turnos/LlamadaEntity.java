@@ -9,44 +9,41 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "atencion", schema = "turnos")
+@Table(name = "llamada", schema = "turnos")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AtencionEntity {
+public class LlamadaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "atencionid")
-    private Long atencionId;
-
-    @Column(name = "fecha", nullable = false)
-    private LocalDate fecha;
-
-    @Column(name = "horainicio", nullable = false)
-    private LocalTime horaInicio;
-
-    @Column(name = "horafin")
-    private LocalTime horaFin;
-
-    @Column(name = "codventanilla", length = 6, nullable = false)
-    private String codVentanilla;
-
-    @Column(name = "observacion")
-    private String observacion;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "asesorid", nullable = false)
-    private UsuarioEntity asesor;
+    @Column(name = "llamadaid")
+    private Long llamadaId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ordenatencionid", nullable = false)
     private OrdenAtencionEntity ordenAtencion;
 
-    @Column(name = "codestadoatencion", length = 6, nullable = false)
-    private String codEstadoAtencion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asesorid", nullable = false)
+    private UsuarioEntity asesor;
+
+    @Column(name = "codventanilla", length = 6, nullable = false)
+    private String codVentanilla;
+
+    @Column(name = "fechallamada", nullable = false)
+    private LocalDate fechaLlamada;
+
+    @Column(name = "horallamada", nullable = false)
+    private LocalTime horaLlamada;
+
+    @Column(name = "numllamada", nullable = false)
+    private Integer numLlamada;
+
+    @Column(name = "codresultado", length = 6)
+    private String codResultado;
 
     @Column(name = "estado", nullable = false)
     private int estado;
@@ -65,5 +62,4 @@ public class AtencionEntity {
 
     @Column(name = "eliminado", nullable = false)
     private Boolean eliminado = Boolean.FALSE;
-
 }

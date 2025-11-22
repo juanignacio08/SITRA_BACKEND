@@ -1,6 +1,7 @@
 package com.sitra.sitra.repository.turnos;
 
 import com.sitra.sitra.entity.turnos.OrdenAtencionEntity;
+import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -39,6 +40,14 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
     List<OrdenAtencionEntity> findByCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(String codeStatus, LocalDate date, int status, boolean deleted);
     default List<OrdenAtencionEntity> getByCodeStatusAndDate(String codeStatus, LocalDate date) {
         return findByCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(codeStatus, date, 1, false);
+    }
+
+    Optional<OrdenAtencionEntity> findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminado(String codePriority, String codeStatus, LocalDate date, int status, boolean deteled);
+    default Optional<OrdenAtencionEntity> getOrderInCall(String codePriority, LocalDate date) {
+        return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminado(codePriority, TablaMaestraServiceImpl.EN_LLAMADA, date, 1, false);
+    }
+    default Optional<OrdenAtencionEntity> getNextOrderPending(String codePriority, LocalDate date) {
+        return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminado(codePriority, TablaMaestraServiceImpl.PENDIENTE, date, 1, false);
     }
 
 }

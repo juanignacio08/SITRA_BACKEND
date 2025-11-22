@@ -2,6 +2,7 @@ package com.sitra.sitra.expose.request.turnos;
 
 import com.sitra.sitra.entity.turnos.AtencionEntity;
 import com.sitra.sitra.exceptions.BadRequestException;
+import com.sitra.sitra.expose.util.DateConvertUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import jakarta.validation.constraints.*;
@@ -32,9 +33,8 @@ public class AtencionRequest {
     @Min(value = 1, message = "El id de orden de atención no debe ser menor a 1")
     private Long ordenAtencionId;
 
-    private LocalDate fecha;
+    private String fecha;
 
-    @NotNull(message = "La hora de inicio es requerida.")
     private LocalTime horaInicio;
 
     private LocalTime horaFin;
@@ -54,7 +54,7 @@ public class AtencionRequest {
 
     public static final Function<AtencionRequest, AtencionEntity> toEntity = request -> AtencionEntity.builder()
             .fecha(LocalDate.now())
-            .horaInicio(request.getHoraInicio())
+            .horaInicio(LocalTime.now())
             .horaFin(request.getHoraFin())
             .codVentanilla(request.getCodVentanilla())
             .observacion(request.getObservacion())
@@ -81,7 +81,7 @@ public class AtencionRequest {
             entity.setCodVentanilla(request.getCodVentanilla());
         }
 
-        entity.setFecha(request.getFecha());
+        entity.setFecha(DateConvertUtil.parseFechaDDMMYYYY(request.getFecha()));
         entity.setHoraInicio(request.getHoraInicio());
         entity.setHoraFin(request.getHoraFin());
         entity.setObservacion(request.getObservacion());

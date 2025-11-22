@@ -50,8 +50,8 @@ public class OrdenAtencionController {
         }
     }
 
-    @GetMapping("/getNextOrderAtention")
-    public ResponseEntity<ResponseDTO<Object>> getNextOrderAtention(
+    @GetMapping("/callNext")
+    public ResponseEntity<ResponseDTO<Object>> callNext(
             @RequestParam(name = "date") String date,
             @RequestParam(name = "codePriority") String codePriority,
             @RequestParam(name = "codeVentanilla") String codeVentanilla,

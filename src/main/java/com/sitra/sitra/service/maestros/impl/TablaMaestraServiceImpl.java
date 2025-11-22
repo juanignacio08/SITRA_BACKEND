@@ -55,12 +55,20 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
             "VENTANILLA_2", "003002"
     ));
 
-    private String context;
+    public static Map<String, String> tableCodeResultadoAtencion = new HashMap<>(Map.of(
+            "PENDIENTE", "005001",
+            "SE_PRESENTO", "005002",
+            "NO_RESPONDIO", "005003"
+    ));
+
+    public static final String PENDIENTE_LLAMADA = "005001";
+    public static final String SE_PRESENTO = "005002";
+    public static final String NO_RESPONDIO = "005003";
 
     @Override
     @Transactional
     public TablaMaestraResponse save(TablaMaestraRequest request) {
-        context = "saveTablaMaestra";
+        String context = "saveTablaMaestra";
         log.info("Registrando un nuevo registro de tabla maestra. [ CONTEXTO : {} ]", context);
 
         if (existsByCode(request.getCodigoTabla() + request.getCodigoItem())) throw new DuplicateKeyError("Error! Codigo duplicado.");
@@ -74,7 +82,7 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
 
     @Override
     public List<TablaMaestraResponse> getItems(String codeTable) {
-        context = "getItemsTablaMaestra";
+        String context = "getItemsTablaMaestra";
         log.info("Buscando items de una tabla, en tabla maestra. [ CODIGOTABLA : {} | CONTEXT : {} ]", codeTable, context);
 
         List<TablaMaestraEntity> list = tablaMaestraRepository.getItems(codeTable);
@@ -83,7 +91,7 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
 
     @Override
     public TablaMaestraResponse getByCode(String code) {
-        context = "getItemByCode";
+        String context = "getItemByCode";
         log.info("Obteniendo un item de una tabla. [ CODIGOITEM : {} | CONTEXT : {} ]", code, context);
 
         TablaMaestraEntity entity = getItemByCode(code);
@@ -93,7 +101,7 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
 
     @Override
     public TablaMaestraResponse update(TablaMaestraRequest request) {
-        context = "updateTablaMaestra";
+        String context = "updateTablaMaestra";
         log.info("Actualizando un registro de tabla maestra. [ TABLAMAESTRAID : {} | CONTEXTO : {} ]", request.getIdTablaMaestra(), context);
 
         TablaMaestraEntity entity = getById(request.getIdTablaMaestra());
@@ -107,7 +115,7 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
 
     @Override
     public String delete(Long id) {
-        context = "deleteTablaMaestra";
+        String context = "deleteTablaMaestra";
         log.info("Eliminando un registro de la base de datos. [TABLAMAESTRAID : {} | CONTEXTO : {} ] ", id, context);
 
         TablaMaestraEntity entity = getById(id);

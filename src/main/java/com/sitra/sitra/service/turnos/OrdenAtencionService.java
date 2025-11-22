@@ -20,5 +20,6 @@ public interface OrdenAtencionService {
 
     OrdenAtencionEntity getOrdenById(Long id);
     List<OrdenAtencionEntity> getListByStatus(String codEstadoAtencion);
-
+    OrdenAtencionEntity getOrderInCallStatus(String codePriority, LocalDate date);
+    OrdenAtencionEntity getNextOrderInPendingStatus(String codePriority, LocalDate date);
 }
