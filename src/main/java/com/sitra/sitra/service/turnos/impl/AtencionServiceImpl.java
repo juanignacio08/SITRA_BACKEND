@@ -45,11 +45,11 @@ public class AtencionServiceImpl implements AtencionService {
 
         if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(request.getCodVentanilla())) throw new NotFoundException("Ventanilla no registrado");
 
-        OrdenAtencionEntity ordenAtencion = ordenAtencionService.getOrdenById(request.getOrdenAtencionId());
+        LlamadaEntity llamada = llamadaService.getWithOrderByOrderAtention(request.getOrdenAtencionId());
+
+        OrdenAtencionEntity ordenAtencion = llamada.getOrdenAtencion();
 
         if (!ordenAtencion.getCodEstadoAtencion().equals(TablaMaestraServiceImpl.EN_LLAMADA)) throw new BusinessRuleException("Solo se puede atender a una orden que esta en llamada");
-
-        LlamadaEntity llamada = llamadaService.getByOrderAtention(ordenAtencion.getOrdenAtencionId());
 
         if (!llamada.getAsesor().getUsuarioId().equals(request.getAsesorId())) throw new BusinessRuleException("No puede atender un asesor diferente al asesor que llamo.");
         if (!llamada.getCodVentanilla().equals(request.getCodVentanilla())) throw new BusinessRuleException("No se puede atender en otra ventanilla al que fue llamado.");

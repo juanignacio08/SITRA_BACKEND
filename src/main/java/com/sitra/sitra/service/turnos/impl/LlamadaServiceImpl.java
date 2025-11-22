@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -131,6 +130,13 @@ public class LlamadaServiceImpl implements LlamadaService {
         if (orderAtentionId == null || orderAtentionId < 1) throw new BadRequestException("Id Incorrecto. [ ORDEN ATENCION ]");
 
         return llamadaRepository.getByOrderAtention(orderAtentionId).orElseThrow(() -> new NotFoundException("Recurso no encontrado [ LLAMADA ]"));
+    }
+
+    @Override
+    public LlamadaEntity getWithOrderByOrderAtention(Long orderAtentionId) {
+        if (orderAtentionId == null || orderAtentionId < 1) throw new BadRequestException("Id Incorrecto. [ ORDEN ATENCION ]");
+
+        return llamadaRepository.getWithOrderByOrderAtention(orderAtentionId).orElseThrow(() -> new NotFoundException("Recurso no encontrado [ LLAMADA ]"));
     }
 
     @Override

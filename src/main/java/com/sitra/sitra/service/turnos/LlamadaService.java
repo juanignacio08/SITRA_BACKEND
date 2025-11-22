@@ -10,5 +10,6 @@ public interface LlamadaService {
     LlamadaResponse markAsAbsent(Long llamadaId);
 
     LlamadaEntity getByOrderAtention(Long orderAtentionId);
+    LlamadaEntity getWithOrderByOrderAtention(Long orderAtentionId);
     LlamadaEntity getWithOrderById(Long id);
 }
