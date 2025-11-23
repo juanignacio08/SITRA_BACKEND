@@ -58,12 +58,14 @@ public class TablaMaestraServiceImpl implements TablaMaestraService {
     public static Map<String, String> tableCodeResultadoAtencion = new HashMap<>(Map.of(
             "PENDIENTE", "005001",
             "SE_PRESENTO", "005002",
-            "NO_RESPONDIO", "005003"
+            "NO_RESPONDIO", "005003",
+            "ATENDIDO", "005004"
     ));
 
     public static final String PENDIENTE_LLAMADA = "005001";
     public static final String SE_PRESENTO = "005002";
     public static final String NO_RESPONDIO = "005003";
+    public static final String ATENDIDO_LLAMADA = "005004";
 
     @Override
     @Transactional

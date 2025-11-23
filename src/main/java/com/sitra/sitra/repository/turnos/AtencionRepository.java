@@ -4,7 +4,12 @@ import com.sitra.sitra.entity.turnos.AtencionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface AtencionRepository extends JpaRepository<AtencionEntity, Long> {
-
+    Optional<AtencionEntity> findByAtencionIdAndEstadoAndEliminado(Long atencionId, int status, boolean deleted);
+    default Optional<AtencionEntity> getByID(Long atencionId) {
+        return findByAtencionIdAndEstadoAndEliminado(atencionId, 1, false);
+    }
 }

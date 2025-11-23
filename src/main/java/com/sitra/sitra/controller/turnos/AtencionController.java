@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("atencion")
@@ -38,4 +35,15 @@ public class AtencionController {
         }
     }
 
+    @PutMapping("/finish")
+    public ResponseEntity<ResponseDTO<Object>> finish(@RequestBody @Valid AtencionRequest request) {
+        try {
+            AtencionResponse response = atencionService.finishAtention(request);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Atencion finalizada!");
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en finish: {}", e.getMessage());
+            throw e;
+        }
+    }
 }
