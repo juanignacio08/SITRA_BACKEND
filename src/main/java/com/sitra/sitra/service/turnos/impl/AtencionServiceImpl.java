@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Slf4j
@@ -132,6 +133,59 @@ public class AtencionServiceImpl implements AtencionService {
     }
 
     @Override
+    public PantallaResponse getScreen(String date, String codeVentanilla) {
+        String context = "getScreen";
+        log.info("Obteniendo al paciente que esta siendo llamado o atendiendose. [ FECHA : {} | CONTEXTO : {} ]",date, context);
+
+        LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
+
+        //Buscamos a los que estan en llamada
+        LlamadaEntity inCall = llamadaService.getWithOrderLLamadaInPendind(fecha, codeVentanilla);
+
+        //Buscamos a los que estan atendiendose
+        LlamadaEntity inAtention = llamadaService.getWithOrderLlamadaInPresent(fecha, codeVentanilla);
+
+        if (inCall != null) {
+            if (inAtention != null) {
+                throw new BusinessRuleException("No puede haber mas de una orden de atencion que este llamando y atendiendose en la misma ventanilla");
+            } else {
+                return PantallaResponse.builder()
+                        .orderAtencionId(inCall.getOrdenAtencion().getOrdenAtencionId())
+                        .llamadaId(inCall.getLlamadaId())
+                        .paciente(PersonaResponse.toResponse.apply(inCall.getOrdenAtencion().getPersona()))
+                        .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(inCall.getOrdenAtencion().getFecha()))
+                        .codPriority(inCall.getOrdenAtencion().getCodPrioridad())
+                        .turno(inCall.getOrdenAtencion().getTurno())
+                        .codEstadoAtencion(inCall.getOrdenAtencion().getCodEstadoAtencion())
+                        .codVentanilla(inCall.getCodVentanilla())
+                        .numLlamada(inCall.getNumLlamada())
+                        .codResultado(inCall.getCodResultado())
+                        .build();
+            }
+        } else {
+            if (inAtention != null) {
+                AtencionEntity atencion = getByOrderAtention(inAtention.getOrdenAtencion().getOrdenAtencionId());
+
+                return PantallaResponse.builder()
+                        .orderAtencionId(inAtention.getOrdenAtencion().getOrdenAtencionId())
+                        .llamadaId(inAtention.getLlamadaId())
+                        .atencionId(atencion.getAtencionId())
+                        .paciente(PersonaResponse.toResponse.apply(inAtention.getOrdenAtencion().getPersona()))
+                        .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(inAtention.getOrdenAtencion().getFecha()))
+                        .codPriority(inAtention.getOrdenAtencion().getCodPrioridad())
+                        .turno(inAtention.getOrdenAtencion().getTurno())
+                        .codEstadoAtencion(inAtention.getOrdenAtencion().getCodEstadoAtencion())
+                        .codVentanilla(inAtention.getCodVentanilla())
+                        .numLlamada(inAtention.getNumLlamada())
+                        .codResultado(inAtention.getCodResultado())
+                        .build();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    @Override
     public Page<AtencionResponse> getListPaginatedByDate(int page, int size, String date) {
         return null;
     }
@@ -146,5 +200,12 @@ public class AtencionServiceImpl implements AtencionService {
         if (id == null || id < 1) throw new BadRequestException("Id Incorrecto. [ ATENCION ]");
 
         return atencionRepository.getByID(id).orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ ATENCION ]"));
+    }
+
+    @Override
+    public AtencionEntity getByOrderAtention(Long orderAtentionId) {
+        if (orderAtentionId == null || orderAtentionId < 1) throw new BadRequestException("Id Incorrecto. [ ORDEN_ATENCION ]");
+
+        return atencionRepository.getByOrderAtention(orderAtentionId).orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ ATENCION ]"));
     }
 }

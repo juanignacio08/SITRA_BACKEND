@@ -9,8 +9,10 @@ import org.springframework.data.domain.Page;
 public interface AtencionService {
     PantallaResponse save(AtencionRequest request);
     PantallaResponse finishAtention(AtencionRequest request);
+    PantallaResponse getScreen(String date, String codeVentanilla);
     Page<AtencionResponse> getListPaginatedByDate(int page, int size, String date);
     Page<AtencionResponse> getListPaginatedByDateAndVentanilla(int page, int size, String date, String codeVentanilla);
 
     AtencionEntity getById(Long id);
+    AtencionEntity getByOrderAtention(Long orderAtentionId);
 }

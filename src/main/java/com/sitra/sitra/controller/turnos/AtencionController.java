@@ -44,4 +44,19 @@ public class AtencionController {
             throw e;
         }
     }
+
+    @GetMapping("/getScreen")
+    public ResponseEntity<ResponseDTO<Object>> getScreen(
+            @RequestParam(name = "date") String date,
+            @RequestParam(name = "codeVentanilla") String codeVentanilla
+    ) {
+        try {
+            PantallaResponse response = atencionService.getScreen(date, codeVentanilla);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo paciente en pantalla!");
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getScreen: {}", e.getMessage());
+            throw e;
+        }
+    }
 }

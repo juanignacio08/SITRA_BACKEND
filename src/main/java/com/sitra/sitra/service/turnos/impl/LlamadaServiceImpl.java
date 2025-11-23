@@ -184,6 +184,20 @@ public class LlamadaServiceImpl implements LlamadaService {
         return llamadaRepository.getWithOrderByID(id).orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ LLAMADA ]"));
     }
 
+    @Override
+    public LlamadaEntity getWithOrderLLamadaInPendind(LocalDate date, String codeVentanilla) {
+        if (codeVentanilla == null || codeVentanilla.length() != 6 || date == null) throw new BadRequestException("Error en la fecha o en el codigo de la ventanilla. [ LLAMADA ]");
+
+        return llamadaRepository.getLlamadaInPending(date, codeVentanilla).orElse(null);
+    }
+
+    @Override
+    public LlamadaEntity getWithOrderLlamadaInPresent(LocalDate date, String codeVentanilla) {
+        if (codeVentanilla == null || codeVentanilla.length() != 6 || date == null) throw new BadRequestException("Error en la fecha o en el codigo de la ventanilla. [ LLAMADA ]");
+
+        return llamadaRepository.getLlamadaInAtention(date, codeVentanilla).orElse(null);
+    }
+
     private LlamadaResponse saveByOrderAtentionAndAsesorAndVentanillaAndDate(OrdenAtencionEntity ordenAtencion, UsuarioEntity asesor, String codeVentanilla, LocalDate date) {
         LlamadaEntity entity = LlamadaEntity.builder()
                 .ordenAtencion(ordenAtencion)
