@@ -8,7 +8,10 @@ import com.sitra.sitra.exceptions.BadRequestException;
 import com.sitra.sitra.exceptions.BusinessRuleException;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.turnos.AtencionRequest;
+import com.sitra.sitra.expose.response.seguridad.PersonaResponse;
 import com.sitra.sitra.expose.response.turnos.AtencionResponse;
+import com.sitra.sitra.expose.response.turnos.PantallaResponse;
+import com.sitra.sitra.expose.util.DateConvertUtil;
 import com.sitra.sitra.repository.turnos.AtencionRepository;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.UsuarioService;
@@ -35,7 +38,7 @@ public class AtencionServiceImpl implements AtencionService {
 
     @Override
     @Transactional
-    public AtencionResponse save(AtencionRequest request) {
+    public PantallaResponse save(AtencionRequest request) {
         String context = "startAtention";
         log.info("Registrando una atencion. [ CONTEXTO : {} ]", context);
 
@@ -65,12 +68,24 @@ public class AtencionServiceImpl implements AtencionService {
 
         AtencionEntity saved = atencionRepository.save(entity);
 
-        return AtencionResponse.toResponse.apply(saved);
+        return PantallaResponse.builder()
+                .orderAtencionId(ordenAtencion.getOrdenAtencionId())
+                .llamadaId(llamada.getLlamadaId())
+                .atencionId(saved.getAtencionId())
+                .paciente(PersonaResponse.toResponse.apply(llamada.getOrdenAtencion().getPersona()))
+                .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(ordenAtencion.getFecha()))
+                .codPriority(ordenAtencion.getCodPrioridad())
+                .turno(ordenAtencion.getTurno())
+                .codEstadoAtencion(ordenAtencion.getCodEstadoAtencion())
+                .codVentanilla(llamada.getCodVentanilla())
+                .numLlamada(llamada.getNumLlamada())
+                .codResultado(llamada.getCodResultado())
+                .build();
     }
 
     @Override
     @Transactional
-    public AtencionResponse finishAtention(AtencionRequest request) {
+    public PantallaResponse finishAtention(AtencionRequest request) {
         String context = "finishAtention";
         log.info("Finalizando una atencion. [ ATENCION : {} | ORDENATENCION : {} | CONTEXTO : {} ]", request.getAtencionId(), request.getOrdenAtencionId(), context);
 
@@ -101,7 +116,19 @@ public class AtencionServiceImpl implements AtencionService {
 
         AtencionEntity updated = atencionRepository.save(atencion);
 
-        return AtencionResponse.toResponse.apply(updated);
+        return PantallaResponse.builder()
+                .orderAtencionId(ordenAtencion.getOrdenAtencionId())
+                .llamadaId(llamada.getLlamadaId())
+                .atencionId(updated.getAtencionId())
+                .paciente(PersonaResponse.toResponse.apply(llamada.getOrdenAtencion().getPersona()))
+                .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(ordenAtencion.getFecha()))
+                .codPriority(ordenAtencion.getCodPrioridad())
+                .turno(ordenAtencion.getTurno())
+                .codEstadoAtencion(ordenAtencion.getCodEstadoAtencion())
+                .codVentanilla(llamada.getCodVentanilla())
+                .numLlamada(llamada.getNumLlamada())
+                .codResultado(llamada.getCodResultado())
+                .build();
     }
 
     @Override

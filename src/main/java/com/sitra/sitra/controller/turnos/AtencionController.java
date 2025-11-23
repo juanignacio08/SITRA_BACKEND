@@ -1,10 +1,8 @@
 package com.sitra.sitra.controller.turnos;
 
 import com.sitra.sitra.expose.request.turnos.AtencionRequest;
-import com.sitra.sitra.expose.request.turnos.OrdenAtencionRequest;
 import com.sitra.sitra.expose.response.base.ResponseDTO;
-import com.sitra.sitra.expose.response.turnos.AtencionResponse;
-import com.sitra.sitra.expose.response.turnos.OrdenAtencionResponse;
+import com.sitra.sitra.expose.response.turnos.PantallaResponse;
 import com.sitra.sitra.expose.util.AppUtil;
 import com.sitra.sitra.service.turnos.AtencionService;
 import jakarta.validation.Valid;
@@ -25,7 +23,7 @@ public class AtencionController {
     @PostMapping("/save")
     public ResponseEntity<ResponseDTO<Object>> save(@RequestBody @Valid AtencionRequest request) {
         try {
-            AtencionResponse response = atencionService.save(request);
+            PantallaResponse response = atencionService.save(request);
             ResponseDTO<Object> responseDTO = AppUtil.build(response, "Registro de atencion!");
             log.info("Registro de Atencion!");
             return ResponseEntity.ok(responseDTO);
@@ -38,7 +36,7 @@ public class AtencionController {
     @PutMapping("/finish")
     public ResponseEntity<ResponseDTO<Object>> finish(@RequestBody @Valid AtencionRequest request) {
         try {
-            AtencionResponse response = atencionService.finishAtention(request);
+            PantallaResponse response = atencionService.finishAtention(request);
             ResponseDTO<Object> responseDTO = AppUtil.build(response, "Atencion finalizada!");
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {

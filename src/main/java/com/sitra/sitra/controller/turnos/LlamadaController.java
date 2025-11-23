@@ -3,6 +3,7 @@ package com.sitra.sitra.controller.turnos;
 import com.sitra.sitra.expose.request.turnos.LlamadaRequest;
 import com.sitra.sitra.expose.response.base.ResponseDTO;
 import com.sitra.sitra.expose.response.turnos.LlamadaResponse;
+import com.sitra.sitra.expose.response.turnos.PantallaResponse;
 import com.sitra.sitra.expose.util.AppUtil;
 import com.sitra.sitra.service.turnos.LlamadaService;
 import jakarta.validation.Valid;
@@ -41,7 +42,7 @@ public class LlamadaController {
             @RequestParam(name = "asesorId") Long asesorId
     ) {
         try {
-            LlamadaResponse response = llamadaService.callNext(date, codePriority, codeVentanilla, asesorId);
+            PantallaResponse response = llamadaService.callNext(date, codePriority, codeVentanilla, asesorId);
             ResponseDTO<Object> responseDTO = AppUtil.build(response, "Llamando al siguiente!");
             log.info("Obteniendo siguiente Orden de Atencion en estado llamando");
             return ResponseEntity.ok(responseDTO);
@@ -56,7 +57,7 @@ public class LlamadaController {
             @RequestParam(name = "llamadaId") Long llamadaId
     ) {
         try {
-            LlamadaResponse response = llamadaService.markAsAbsent(llamadaId);
+            PantallaResponse response = llamadaService.markAsAbsent(llamadaId);
             ResponseDTO<Object> responseDTO = AppUtil.build(response, "Llamada marcada como ausente!");
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {

@@ -14,13 +14,13 @@ public interface LlamadaRepository extends JpaRepository<LlamadaEntity, Long> {
         return findByOrdenAtencion_OrdenAtencionIdAndEstadoAndEliminado(orderAtentionId, 1, false);
     }
 
-    @EntityGraph(attributePaths = {"ordenAtencion"})
+    @EntityGraph(attributePaths = {"ordenAtencion.persona"})
     Optional<LlamadaEntity> findByOrdenAtencion_OrdenAtencionIdAndEstadoAndEliminadoEquals(Long orderAtentionId, int status, boolean deleted);
     default Optional<LlamadaEntity> getWithOrderByOrderAtention(Long orderAtentionId) {
         return findByOrdenAtencion_OrdenAtencionIdAndEstadoAndEliminadoEquals(orderAtentionId, 1, false);
     }
 
-    @EntityGraph(attributePaths = {"ordenAtencion"})
+    @EntityGraph(attributePaths = {"ordenAtencion.persona"})
     Optional<LlamadaEntity> findByLlamadaIdAndEstadoAndEliminado(Long llamadaId, int status, boolean deleted);
     default Optional<LlamadaEntity> getWithOrderByID(Long id) {
         return findByLlamadaIdAndEstadoAndEliminado(id, 1, false);

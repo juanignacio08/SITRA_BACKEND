@@ -50,24 +50,6 @@ public class OrdenAtencionController {
         }
     }
 
-    @GetMapping("/callNext")
-    public ResponseEntity<ResponseDTO<Object>> callNext(
-            @RequestParam(name = "date") String date,
-            @RequestParam(name = "codePriority") String codePriority,
-            @RequestParam(name = "codeVentanilla") String codeVentanilla,
-            @RequestParam(name = "asesorId") Long asesorId
-    ) {
-        try {
-            OrdenAtencionResponse response = ordenAtencionService.callNext(date, codePriority, codeVentanilla, asesorId);
-            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo el siguiente Orden de atencion en estado llamando!");
-            log.info("Obteniendo siguiente Orden de Atencion en estado llamando");
-            return ResponseEntity.ok(responseDTO);
-        } catch (Exception e) {
-            log.error("Error en getNextOrderAtention: {}", e.getMessage());
-            throw e;
-        }
-    }
-
     @GetMapping("/getNormalPaginated")
     public ResponseEntity<ConsultaResponseDTO> getNormalPaginated(
             @RequestParam(defaultValue = "0") int page,

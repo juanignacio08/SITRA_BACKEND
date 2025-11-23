@@ -7,7 +7,9 @@ import com.sitra.sitra.exceptions.BadRequestException;
 import com.sitra.sitra.exceptions.BusinessRuleException;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.turnos.LlamadaRequest;
+import com.sitra.sitra.expose.response.seguridad.PersonaResponse;
 import com.sitra.sitra.expose.response.turnos.LlamadaResponse;
+import com.sitra.sitra.expose.response.turnos.PantallaResponse;
 import com.sitra.sitra.expose.util.DateConvertUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.repository.turnos.LlamadaRepository;
@@ -56,7 +58,7 @@ public class LlamadaServiceImpl implements LlamadaService {
 
     @Override
     @Transactional
-    public LlamadaResponse callNext(String date, String codePriority, String codeVentanilla, Long asesorId) {
+    public PantallaResponse callNext(String date, String codePriority, String codeVentanilla, Long asesorId) {
         String context = "callNextOrderAtention";
         log.info("LLamando al siguiente orden de atencion. [ DATE : {} | CODEPRIORITY : {} | CODEVENTANILLA : {} | ASESOR : {} | CONTEXTO : {} ]", date, codePriority, codeVentanilla, asesorId, context);
 
@@ -87,7 +89,19 @@ public class LlamadaServiceImpl implements LlamadaService {
 
             LlamadaEntity updated = llamadaRepository.save(llamada);
 
-            return LlamadaResponse.toResponse.apply(updated);
+            return PantallaResponse.builder()
+                    .orderAtencionId(orderAtentionInCall.getOrdenAtencionId())
+                    .llamadaId(updated.getLlamadaId())
+                    .paciente(PersonaResponse.toResponse.apply(orderAtentionInCall.getPersona()))
+                    .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(orderAtentionInCall.getFecha()))
+                    .codPriority(orderAtentionInCall.getCodPrioridad())
+                    .turno(orderAtentionInCall.getTurno())
+                    .codEstadoAtencion(orderAtentionInCall.getCodEstadoAtencion())
+                    .codVentanilla(updated.getCodVentanilla())
+                    .numLlamada(updated.getNumLlamada())
+                    .codResultado(updated.getCodResultado())
+                    .build();
+
         } else {
             //Si no existe, llamar al primero de la lista y nume llamada = 1
             orderAtentionNext = ordenAtencionService.getNextOrderInPendingStatus(codePriority, fecha);
@@ -98,12 +112,25 @@ public class LlamadaServiceImpl implements LlamadaService {
             orderAtentionNext.setFechaActualizacion(LocalDateTime.now());
 
             LlamadaResponse response = saveByOrderAtentionAndAsesorAndVentanillaAndDate(orderAtentionNext, asesor, codeVentanilla, fecha);
-            return response;
+
+
+            return PantallaResponse.builder()
+                    .orderAtencionId(orderAtentionNext.getOrdenAtencionId())
+                    .llamadaId(response.getLlamadaId())
+                    .paciente(PersonaResponse.toResponse.apply(orderAtentionNext.getPersona()))
+                    .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(orderAtentionNext.getFecha()))
+                    .codPriority(orderAtentionNext.getCodPrioridad())
+                    .turno(orderAtentionNext.getTurno())
+                    .codEstadoAtencion(orderAtentionNext.getCodEstadoAtencion())
+                    .codVentanilla(response.getCodVentanilla())
+                    .numLlamada(response.getNumLlamada())
+                    .codResultado(response.getCodResultado())
+                    .build();
         }
     }
 
     @Override
-    public LlamadaResponse markAsAbsent(Long llamadaId) {
+    public PantallaResponse markAsAbsent(Long llamadaId) {
         String context = "markAsAbsentLLamadaAndOrder";
         log.info("Marcar como no presentado y ausente una llamada y orden. [ LLAMADA : {} | CONTEXTO : {} ]", llamadaId, context);
 
@@ -122,7 +149,18 @@ public class LlamadaServiceImpl implements LlamadaService {
 
         LlamadaEntity updated = llamadaRepository.save(entity);
 
-        return LlamadaResponse.toResponse.apply(updated);
+        return PantallaResponse.builder()
+                .orderAtencionId(entity.getOrdenAtencion().getOrdenAtencionId())
+                .llamadaId(updated.getLlamadaId())
+                .paciente(PersonaResponse.toResponse.apply(entity.getOrdenAtencion().getPersona()))
+                .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(entity.getOrdenAtencion().getFecha()))
+                .codPriority(entity.getOrdenAtencion().getCodPrioridad())
+                .turno(entity.getOrdenAtencion().getTurno())
+                .codEstadoAtencion(entity.getOrdenAtencion().getCodEstadoAtencion())
+                .codVentanilla(updated.getCodVentanilla())
+                .numLlamada(updated.getNumLlamada())
+                .codResultado(updated.getCodResultado())
+                .build();
     }
 
     @Override
