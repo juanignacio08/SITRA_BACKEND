@@ -43,12 +43,12 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
     }
 
     @EntityGraph(attributePaths = {"persona"})
-    Optional<OrdenAtencionEntity> findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminado(String codePriority, String codeStatus, LocalDate date, int status, boolean deteled);
+    Optional<OrdenAtencionEntity> findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(String codePriority, String codeStatus, LocalDate date, int status, boolean deteled);
     default Optional<OrdenAtencionEntity> getOrderInCall(String codePriority, LocalDate date) {
-        return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminado(codePriority, TablaMaestraServiceImpl.EN_LLAMADA, date, 1, false);
+        return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(codePriority, TablaMaestraServiceImpl.EN_LLAMADA, date, 1, false);
     }
     default Optional<OrdenAtencionEntity> getNextOrderPending(String codePriority, LocalDate date) {
-        return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminado(codePriority, TablaMaestraServiceImpl.PENDIENTE, date, 1, false);
+        return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(codePriority, TablaMaestraServiceImpl.PENDIENTE, date, 1, false);
     }
 
 }
