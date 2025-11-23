@@ -69,13 +69,17 @@ public class LlamadaServiceImpl implements LlamadaService {
 
         UsuarioEntity asesor = usuarioService.getUser(asesorId);
 
-        //Verificar si existe alguien en llamada
-        OrdenAtencionEntity orderAtentionInCall = ordenAtencionService.getOrderInCallStatus(codePriority, fecha);
+        //Verificar si existe alguien en ventanilla
+        //OrdenAtencionEntity orderAtentionInCall = ordenAtencionService.getOrderInCallStatus(codePriority, fecha);
+        OrdenAtencionEntity orderAtentionInVentanilla = ordenAtencionService.getOrderInVentanilla(codePriority, fecha);
+
         OrdenAtencionEntity orderAtentionNext;
 
         //Si existe, llamar ese mismo.
-        if (orderAtentionInCall != null) {
-            LlamadaEntity llamada = getByOrderAtention(orderAtentionInCall.getOrdenAtencionId());
+        if (orderAtentionInVentanilla != null) {
+            if (orderAtentionInVentanilla.getCodEstadoAtencion().equals(TablaMaestraServiceImpl.ATENDIENDO)) throw new BusinessRuleException("No se puede llamar cuando se tiene un paciente en atencion");
+
+            LlamadaEntity llamada = getByOrderAtention(orderAtentionInVentanilla.getOrdenAtencionId());
             if (!llamada.getAsesor().getUsuarioId().equals(asesorId)) throw new BusinessRuleException("No puede llamar otro asesor a una orden ya llamada con otro asesor");
             if (!llamada.getCodVentanilla().equals(codeVentanilla)) throw new BusinessRuleException("No puede llamar otra ventanilla a una orden ya llamada por otra ventanilla");
             if (!llamada.getCodResultado().equals(TablaMaestraServiceImpl.PENDIENTE_LLAMADA)) throw new BusinessRuleException("Solo se permite llamar a una orden pendiente");
@@ -84,19 +88,19 @@ public class LlamadaServiceImpl implements LlamadaService {
                 llamada.setNumLlamada(llamada.getNumLlamada() + 1);
             } else {
                 llamada.setCodResultado(TablaMaestraServiceImpl.NO_RESPONDIO);
-                orderAtentionInCall.setCodEstadoAtencion(TablaMaestraServiceImpl.AUSENTE);
+                orderAtentionInVentanilla.setCodEstadoAtencion(TablaMaestraServiceImpl.AUSENTE);
             }
 
             LlamadaEntity updated = llamadaRepository.save(llamada);
 
             return PantallaResponse.builder()
-                    .orderAtencionId(orderAtentionInCall.getOrdenAtencionId())
+                    .orderAtencionId(orderAtentionInVentanilla.getOrdenAtencionId())
                     .llamadaId(updated.getLlamadaId())
-                    .paciente(PersonaResponse.toResponse.apply(orderAtentionInCall.getPersona()))
-                    .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(orderAtentionInCall.getFecha()))
-                    .codPriority(orderAtentionInCall.getCodPrioridad())
-                    .turno(orderAtentionInCall.getTurno())
-                    .codEstadoAtencion(orderAtentionInCall.getCodEstadoAtencion())
+                    .paciente(PersonaResponse.toResponse.apply(orderAtentionInVentanilla.getPersona()))
+                    .fecha(DateConvertUtil.formatLocalDateToDDMMYYYY(orderAtentionInVentanilla.getFecha()))
+                    .codPriority(orderAtentionInVentanilla.getCodPrioridad())
+                    .turno(orderAtentionInVentanilla.getTurno())
+                    .codEstadoAtencion(orderAtentionInVentanilla.getCodEstadoAtencion())
                     .codVentanilla(updated.getCodVentanilla())
                     .numLlamada(updated.getNumLlamada())
                     .codResultado(updated.getCodResultado())

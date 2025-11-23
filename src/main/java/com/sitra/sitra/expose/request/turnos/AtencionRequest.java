@@ -1,11 +1,7 @@
 package com.sitra.sitra.expose.request.turnos;
 
 import com.sitra.sitra.entity.turnos.AtencionEntity;
-import com.sitra.sitra.exceptions.BadRequestException;
-import com.sitra.sitra.exceptions.BusinessRuleException;
-import com.sitra.sitra.expose.util.DateConvertUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
-import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import jakarta.validation.constraints.*;
 import lombok.*;
 

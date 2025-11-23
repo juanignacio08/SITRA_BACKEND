@@ -51,4 +51,25 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
         return findFirstByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(codePriority, TablaMaestraServiceImpl.PENDIENTE, date, 1, false);
     }
 
+    @EntityGraph(attributePaths = {"persona"})
+    Optional<OrdenAtencionEntity> findFirstByCodPrioridadAndCodEstadoAtencionInAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(
+            String codePriority,
+            List<String> codeStatusList,
+            LocalDate date,
+            int status,
+            boolean deleted
+    );
+    default Optional<OrdenAtencionEntity> getOrderInVentanilla(String codePriority, LocalDate date) {
+        return findFirstByCodPrioridadAndCodEstadoAtencionInAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(
+                codePriority,
+                List.of(
+                        TablaMaestraServiceImpl.EN_LLAMADA,
+                        TablaMaestraServiceImpl.ATENDIENDO
+                ),
+                date,
+                1,
+                false
+        );
+    }
+
 }
