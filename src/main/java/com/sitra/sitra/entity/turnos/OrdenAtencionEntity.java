@@ -46,6 +46,9 @@ public class OrdenAtencionEntity {
     @Column(name = "codestadoatencion", nullable = false, length = 6)
     private String codEstadoAtencion;
 
+    @Column(name = "codventanilla", length = 6)
+    private String codVentanilla;
+
     @Column(name = "estado", nullable = false)
     private int estado;
 

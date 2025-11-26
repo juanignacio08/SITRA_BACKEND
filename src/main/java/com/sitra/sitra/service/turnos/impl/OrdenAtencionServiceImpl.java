@@ -186,10 +186,10 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
     }
 
     @Override
-    public OrdenAtencionEntity getOrderInVentanilla(String codePriority, LocalDate date) {
+    public OrdenAtencionEntity getOrderInVentanilla(String codePriority, LocalDate date, String codeVentanilla) {
         if (codePriority == null || codePriority.length() != 6) throw new BadRequestException("PriorityCode Incorrect. [ OrderAtention ]");
 
-        return ordenAtencionRepository.getOrderInVentanilla(codePriority, date).orElse(null);
+        return ordenAtencionRepository.getOrderInVentanilla(codePriority, date, codeVentanilla).orElse(null);
     }
 
 }

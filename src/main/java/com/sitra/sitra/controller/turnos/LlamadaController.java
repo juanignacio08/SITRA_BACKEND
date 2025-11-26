@@ -54,10 +54,11 @@ public class LlamadaController {
 
     @PutMapping("/markAsAbsent")
     public ResponseEntity<ResponseDTO<Object>> markAsAbsent(
-            @RequestParam(name = "llamadaId") Long llamadaId
+            @RequestParam(name = "llamadaId") Long llamadaId,
+            @RequestParam(name = "codeVentanilla") String codeVentanilla
     ) {
         try {
-            PantallaResponse response = llamadaService.markAsAbsent(llamadaId);
+            PantallaResponse response = llamadaService.markAsAbsent(llamadaId, codeVentanilla);
             ResponseDTO<Object> responseDTO = AppUtil.build(response, "Llamada marcada como ausente!");
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {

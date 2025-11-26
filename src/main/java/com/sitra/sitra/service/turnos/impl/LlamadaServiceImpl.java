@@ -69,13 +69,10 @@ public class LlamadaServiceImpl implements LlamadaService {
 
         UsuarioEntity asesor = usuarioService.getUser(asesorId);
 
-        //Verificar si existe alguien en ventanilla
-        //OrdenAtencionEntity orderAtentionInCall = ordenAtencionService.getOrderInCallStatus(codePriority, fecha);
-        OrdenAtencionEntity orderAtentionInVentanilla = ordenAtencionService.getOrderInVentanilla(codePriority, fecha);
+        OrdenAtencionEntity orderAtentionInVentanilla = ordenAtencionService.getOrderInVentanilla(codePriority, fecha, codeVentanilla);
 
         OrdenAtencionEntity orderAtentionNext;
 
-        //Si existe, llamar ese mismo.
         if (orderAtentionInVentanilla != null) {
             if (orderAtentionInVentanilla.getCodEstadoAtencion().equals(TablaMaestraServiceImpl.ATENDIENDO)) throw new BusinessRuleException("No se puede llamar cuando se tiene un paciente en atencion");
 
@@ -107,16 +104,15 @@ public class LlamadaServiceImpl implements LlamadaService {
                     .build();
 
         } else {
-            //Si no existe, llamar al primero de la lista y nume llamada = 1
             orderAtentionNext = ordenAtencionService.getNextOrderInPendingStatus(codePriority, fecha);
             if (orderAtentionNext == null) return null;
 
             orderAtentionNext.setCodEstadoAtencion(TablaMaestraServiceImpl.EN_LLAMADA);
+            orderAtentionNext.setCodVentanilla(codeVentanilla);
             orderAtentionNext.setActualizadoPor(SecurityUtil.getCurrentUserId());
             orderAtentionNext.setFechaActualizacion(LocalDateTime.now());
 
             LlamadaResponse response = saveByOrderAtentionAndAsesorAndVentanillaAndDate(orderAtentionNext, asesor, codeVentanilla, fecha);
-
 
             return PantallaResponse.builder()
                     .orderAtencionId(orderAtentionNext.getOrdenAtencionId())
@@ -134,20 +130,25 @@ public class LlamadaServiceImpl implements LlamadaService {
     }
 
     @Override
-    public PantallaResponse markAsAbsent(Long llamadaId) {
+    public PantallaResponse markAsAbsent(Long llamadaId, String codeVentanilla) {
         String context = "markAsAbsentLLamadaAndOrder";
         log.info("Marcar como no presentado y ausente una llamada y orden. [ LLAMADA : {} | CONTEXTO : {} ]", llamadaId, context);
 
         LlamadaEntity entity = getWithOrderById(llamadaId);
 
+        if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(codeVentanilla)) throw new BadRequestException("Ventanilla no registrada");
+
         if (!entity.getCodResultado().equals(TablaMaestraServiceImpl.PENDIENTE_LLAMADA)) throw new BusinessRuleException("Solo se puede dar como ausente una vez que la orden de atencion fue llamado.");
         if (!entity.getNumLlamada().equals(3)) throw new BusinessRuleException("Solo se puede marcar como ausente cuando se le haya llamado tres veces");
+        if (!entity.getCodVentanilla().equals(codeVentanilla)) throw new BusinessRuleException("Solo puede marcar ausente la misma ventanilla que lo llamo.");
 
         entity.getOrdenAtencion().setCodEstadoAtencion(TablaMaestraServiceImpl.AUSENTE);
+        entity.getOrdenAtencion().setCodVentanilla(codeVentanilla);
         entity.getOrdenAtencion().setActualizadoPor(SecurityUtil.getCurrentUserId());
         entity.getOrdenAtencion().setFechaActualizacion(LocalDateTime.now());
 
         entity.setCodResultado(TablaMaestraServiceImpl.NO_RESPONDIO);
+        entity.setCodVentanilla(codeVentanilla);
         entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
         entity.setFechaActualizacion(LocalDateTime.now());
 

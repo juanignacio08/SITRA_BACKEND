@@ -50,7 +50,7 @@ public class AtencionServiceImpl implements AtencionService {
         OrdenAtencionEntity ordenAtencion = llamada.getOrdenAtencion();
 
         if (!ordenAtencion.getCodEstadoAtencion().equals(TablaMaestraServiceImpl.EN_LLAMADA)) throw new BusinessRuleException("Solo se puede atender a una orden que esta en llamada");
-
+        if (!ordenAtencion.getCodVentanilla().equals(request.getCodVentanilla())) throw new BusinessRuleException("No se puede atender en otra ventanilla al que fue llamado.");
         if (!llamada.getAsesor().getUsuarioId().equals(request.getAsesorId())) throw new BusinessRuleException("No puede atender un asesor diferente al asesor que llamo.");
         if (!llamada.getCodVentanilla().equals(request.getCodVentanilla())) throw new BusinessRuleException("No se puede atender en otra ventanilla al que fue llamado.");
         if (llamada.getNumLlamada().equals(0)) throw new BusinessRuleException("No se puede atender a una orden que tiene 0 llamadas.");
@@ -59,9 +59,11 @@ public class AtencionServiceImpl implements AtencionService {
         UsuarioEntity asesor = usuarioService.getUser(request.getAsesorId());
 
         ordenAtencion.setCodEstadoAtencion(TablaMaestraServiceImpl.ATENDIENDO);
+        ordenAtencion.setCodVentanilla(request.getCodVentanilla());
 
         llamada.setCodResultado(TablaMaestraServiceImpl.SE_PRESENTO);
         llamada.setOrdenAtencion(ordenAtencion);
+        llamada.setCodVentanilla(request.getCodVentanilla());
 
         AtencionEntity entity = AtencionRequest.toEntity.apply(request);
         entity.setAsesor(asesor);
@@ -91,15 +93,17 @@ public class AtencionServiceImpl implements AtencionService {
         log.info("Finalizando una atencion. [ ATENCION : {} | ORDENATENCION : {} | CONTEXTO : {} ]", request.getAtencionId(), request.getOrdenAtencionId(), context);
 
         AtencionEntity atencion = getById(request.getAtencionId());
+
         if (!atencion.getCodVentanilla().equals(request.getCodVentanilla())) throw new BusinessRuleException("Solo se puede finalizar la atencion la misma ventanilla que la inicio");
         if (!atencion.getAsesor().getUsuarioId().equals(request.getAsesorId())) throw new BusinessRuleException("Solo puede finalizar la atencion el mismo asesor");
-        if (!atencion.getOrdenAtencion().getOrdenAtencionId().equals(request.getOrdenAtencionId())) throw new BusinessRuleException("No coinciden los ordenes de atencion.");
+        if (!atencion.getOrdenAtencion().getOrdenAtencionId().equals(request.getOrdenAtencionId())) throw new BusinessRuleException("No se puede atender en otra ventanilla al que fue llamado.");
 
         LlamadaEntity llamada = llamadaService.getWithOrderByOrderAtention(request.getOrdenAtencionId());
 
         OrdenAtencionEntity ordenAtencion = llamada.getOrdenAtencion();
 
         if (!ordenAtencion.getCodEstadoAtencion().equals(TablaMaestraServiceImpl.ATENDIENDO)) throw new BusinessRuleException("Solo se puede finalizar la atencion a una orden que esta siendo atendiendo");
+        if (!ordenAtencion.getCodVentanilla().equals(request.getCodVentanilla())) throw new BusinessRuleException("");
 
         if (!llamada.getAsesor().getUsuarioId().equals(request.getAsesorId())) throw new BusinessRuleException("No puede atender un asesor diferente al asesor que llamo.");
         if (!llamada.getCodVentanilla().equals(request.getCodVentanilla())) throw new BusinessRuleException("No se puede atender en otra ventanilla al que fue llamado.");
@@ -107,9 +111,11 @@ public class AtencionServiceImpl implements AtencionService {
         if (!llamada.getCodResultado().equals(TablaMaestraServiceImpl.SE_PRESENTO)) throw new BusinessRuleException("Solo se puede finalizar a las llamadas que los pacientes se presentaron.");
 
         ordenAtencion.setCodEstadoAtencion(TablaMaestraServiceImpl.ATENDIDO);
+        ordenAtencion.setCodVentanilla(request.getCodVentanilla());
 
         llamada.setCodResultado(TablaMaestraServiceImpl.ATENDIDO_LLAMADA);
         llamada.setOrdenAtencion(ordenAtencion);
+        llamada.setCodVentanilla(request.getCodVentanilla());
 
         AtencionRequest.toUpdate(request, atencion);
         atencion.setHoraFin(LocalTime.now());

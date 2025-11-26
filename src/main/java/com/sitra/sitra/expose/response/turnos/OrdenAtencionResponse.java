@@ -23,6 +23,7 @@ public class OrdenAtencionResponse {
     private String fecha;
     private LocalTime hora;
     private String codPrioridad;
+    private String codVentanilla;
     private Integer turno;
     private String codEstadoAtencion;
     private int estado;
@@ -40,6 +41,7 @@ public class OrdenAtencionResponse {
             .codPrioridad(entity.getCodPrioridad())
             .turno(entity.getTurno())
             .codEstadoAtencion(entity.getCodEstadoAtencion())
+            .codVentanilla(entity.getCodVentanilla())
             .estado(entity.getEstado())
             .build();
 
@@ -54,6 +56,7 @@ public class OrdenAtencionResponse {
             .codPrioridad(entity.getCodPrioridad())
             .turno(entity.getTurno())
             .codEstadoAtencion(entity.getCodEstadoAtencion())
+            .codVentanilla(entity.getCodVentanilla())
             .estado(entity.getEstado())
             .build();
 
@@ -66,6 +69,7 @@ public class OrdenAtencionResponse {
             .codPrioridad(entity.getCodPrioridad())
             .turno(entity.getTurno())
             .codEstadoAtencion(entity.getCodEstadoAtencion())
+            .codVentanilla(entity.getCodVentanilla())
             .estado(entity.getEstado())
             .build();
 

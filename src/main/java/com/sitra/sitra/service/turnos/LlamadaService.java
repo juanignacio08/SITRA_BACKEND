@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public interface LlamadaService {
     LlamadaResponse save(LlamadaRequest request);
     PantallaResponse callNext(String date, String codePriority, String codeVentanilla, Long asesorId);
-    PantallaResponse markAsAbsent(Long llamadaId);
+    PantallaResponse markAsAbsent(Long llamadaId, String codeVentanilla);
 
     LlamadaEntity getByOrderAtention(Long orderAtentionId);
     LlamadaEntity getWithOrderByOrderAtention(Long orderAtentionId);
