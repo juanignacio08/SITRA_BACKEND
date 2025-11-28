@@ -4,7 +4,6 @@ import com.sitra.sitra.entity.seguridad.PersonaEntity;
 import com.sitra.sitra.entity.seguridad.UsuarioEntity;
 import com.sitra.sitra.entity.turnos.OrdenAtencionEntity;
 import com.sitra.sitra.exceptions.BadRequestException;
-import com.sitra.sitra.exceptions.BusinessRuleException;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.turnos.OrdenAtencionRequest;
 import com.sitra.sitra.expose.response.turnos.OrdenAtencionResponse;
@@ -26,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -52,36 +52,10 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
         entity.setPersona(person);
         entity.setReceptor(user);
 
-        Integer turno = switch (entity.getCodPrioridad()) {
-            case TablaMaestraServiceImpl.NORMAL -> {
-                List<OrdenAtencionEntity> list = ordenAtencionRepository.getByCodeStatusAndCodePrio(
-                        TablaMaestraServiceImpl.PENDIENTE,
-                        TablaMaestraServiceImpl.NORMAL,
-                        entity.getFecha()
-                );
-                yield list.isEmpty() ? 1 : list.getLast().getTurno() + 1;
-            }
-            case TablaMaestraServiceImpl.PREFERENCIAL -> {
-                List<OrdenAtencionEntity> list = ordenAtencionRepository.getByCodeStatusAndCodePrio(
-                        TablaMaestraServiceImpl.PENDIENTE,
-                        TablaMaestraServiceImpl.PREFERENCIAL,
-                        entity.getFecha()
-                );
-                yield list.isEmpty() ? 1 : list.getLast().getTurno() + 1;
-            }
-            case TablaMaestraServiceImpl.URGENTE -> {
-                List<OrdenAtencionEntity> list = ordenAtencionRepository.getByCodeStatusAndCodePrio(
-                        TablaMaestraServiceImpl.PENDIENTE,
-                        TablaMaestraServiceImpl.URGENTE,
-                        entity.getFecha()
-                );
-                yield list.isEmpty() ? 1 : list.getLast().getTurno() + 1;
-            }
-            default -> throw new BusinessRuleException("Codigo Preferencial no registrado");
-
-        };
-
-        entity.setTurno(turno);
+        Optional<OrdenAtencionEntity> orderAtention = ordenAtencionRepository.getFirstByFecha(entity.getFecha());
+        entity.setTurno(
+                orderAtention.map(o -> o.getTurno() + 1).orElse(1)
+        );
 
         OrdenAtencionEntity saved = ordenAtencionRepository.save(entity);
 

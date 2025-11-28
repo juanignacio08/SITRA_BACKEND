@@ -19,6 +19,11 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
         return findByCodEstadoAtencionAndCodPrioridadAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(codeStatus, codePreferential, date, 1, false);
     }
 
+    Optional<OrdenAtencionEntity> findFirstByFechaAndEstadoAndEliminadoOrderByTurnoDesc(LocalDate date, int status, boolean deleted);
+    default Optional<OrdenAtencionEntity> getFirstByFecha(LocalDate date) {
+        return findFirstByFechaAndEstadoAndEliminadoOrderByTurnoDesc(date, 1, false);
+    }
+
     @EntityGraph(attributePaths = {"persona"})
     Page<OrdenAtencionEntity> findByCodPrioridadAndCodEstadoAtencionAndFechaAndEstadoAndEliminadoOrderByTurnoAsc(String codePreferential, String codeStatus, LocalDate date, int estado, boolean eliminado, Pageable pageable);
     default Page<OrdenAtencionEntity> getOrdersByCodePreferentialAndCodeStatus(String codePreferential, String codeStatus, LocalDate date, Pageable pageable) {
