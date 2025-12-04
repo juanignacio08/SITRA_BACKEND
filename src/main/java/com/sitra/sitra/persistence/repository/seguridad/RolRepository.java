@@ -1,4 +1,4 @@
-package com.sitra.sitra.repository.seguridad;
+package com.sitra.sitra.persistence.repository.seguridad;
 
 import com.sitra.sitra.entity.seguridad.RolEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -12,7 +12,7 @@ import com.sitra.sitra.expose.response.seguridad.PersonaResponse;
 import com.sitra.sitra.expose.response.turnos.AtencionResponse;
 import com.sitra.sitra.expose.response.turnos.PantallaResponse;
 import com.sitra.sitra.expose.util.DateConvertUtil;
-import com.sitra.sitra.repository.turnos.AtencionRepository;
+import com.sitra.sitra.persistence.repository.turnos.AtencionRepository;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.UsuarioService;
 import com.sitra.sitra.service.turnos.AtencionService;

@@ -10,7 +10,7 @@ import com.sitra.sitra.expose.request.seguridad.UsuarioRequest;
 import com.sitra.sitra.expose.response.seguridad.UsuarioResponse;
 import com.sitra.sitra.expose.util.PasswordUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
-import com.sitra.sitra.repository.seguridad.UsuarioRepository;
+import com.sitra.sitra.persistence.repository.seguridad.UsuarioRepository;
 import com.sitra.sitra.service.seguridad.PersonaService;
 import com.sitra.sitra.service.seguridad.RolService;
 import com.sitra.sitra.service.seguridad.UsuarioService;

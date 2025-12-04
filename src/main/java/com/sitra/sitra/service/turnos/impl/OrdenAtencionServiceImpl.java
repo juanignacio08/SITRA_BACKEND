@@ -8,7 +8,8 @@ import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.turnos.OrdenAtencionRequest;
 import com.sitra.sitra.expose.response.turnos.OrdenAtencionResponse;
 import com.sitra.sitra.expose.util.DateConvertUtil;
-import com.sitra.sitra.repository.turnos.OrdenAtencionRepository;
+import com.sitra.sitra.persistence.projections.OrdenAtencionDetailProjection;
+import com.sitra.sitra.persistence.repository.turnos.OrdenAtencionRepository;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.PersonaService;
 import com.sitra.sitra.service.seguridad.UsuarioService;
@@ -136,6 +137,16 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
                 .orElseThrow(() -> new NotFoundException("Recurso no encontrado. [ ORDENATENCION ]"));
 
         return OrdenAtencionResponse.toResponseDetail.apply(entity);
+    }
+
+    @Override
+    public List<OrdenAtencionDetailProjection> getRecordByDate(String date) {
+        if (date == null || date.length() != 10) throw new BadRequestException("Fecha incorrecta. (dd/mm/YYYY)");
+        LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
+
+        List<OrdenAtencionDetailProjection> list = ordenAtencionRepository.getRecordsByDate(fecha);
+
+        return list;
     }
 
     @Override

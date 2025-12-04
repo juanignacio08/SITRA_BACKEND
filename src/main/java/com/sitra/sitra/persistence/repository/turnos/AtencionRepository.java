@@ -1,4 +1,4 @@
-package com.sitra.sitra.repository.turnos;
+package com.sitra.sitra.persistence.repository.turnos;
 
 import com.sitra.sitra.entity.turnos.AtencionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -5,6 +5,7 @@ import com.sitra.sitra.expose.response.base.ConsultaResponseDTO;
 import com.sitra.sitra.expose.response.base.ResponseDTO;
 import com.sitra.sitra.expose.response.turnos.OrdenAtencionResponse;
 import com.sitra.sitra.expose.util.AppUtil;
+import com.sitra.sitra.persistence.projections.OrdenAtencionDetailProjection;
 import com.sitra.sitra.service.turnos.OrdenAtencionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -116,6 +117,18 @@ public class OrdenAtencionController {
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             log.error("Error en getById: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @GetMapping("/getRecordByDate")
+    public ResponseEntity<ResponseDTO<Object>> getRecordByDate(@RequestParam(name = "date") String date) {
+        try {
+            List<OrdenAtencionDetailProjection> response = ordenAtencionService.getRecordByDate(date);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo a detalle los ordenes de atencion!");
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getRecordByDate: {}", e.getMessage());
             throw e;
         }
     }

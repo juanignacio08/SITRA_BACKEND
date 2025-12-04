@@ -6,7 +6,7 @@ import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.seguridad.RolRequest;
 import com.sitra.sitra.expose.response.seguridad.RolResponse;
 import com.sitra.sitra.expose.util.SecurityUtil;
-import com.sitra.sitra.repository.seguridad.RolRepository;
+import com.sitra.sitra.persistence.repository.seguridad.RolRepository;
 import com.sitra.sitra.service.seguridad.RolService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

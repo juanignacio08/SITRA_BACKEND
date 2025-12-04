@@ -6,7 +6,7 @@ import com.sitra.sitra.exceptions.DuplicateKeyError;
 import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.maestros.TablaMaestraRequest;
 import com.sitra.sitra.expose.response.maestros.TablaMaestraResponse;
-import com.sitra.sitra.repository.maestros.TablaMaestraRepository;
+import com.sitra.sitra.persistence.repository.maestros.TablaMaestraRepository;
 import com.sitra.sitra.service.maestros.TablaMaestraService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -7,7 +7,7 @@ import com.sitra.sitra.exceptions.NotFoundException;
 import com.sitra.sitra.expose.request.seguridad.PersonaRequest;
 import com.sitra.sitra.expose.response.seguridad.PersonaResponse;
 import com.sitra.sitra.expose.util.SecurityUtil;
-import com.sitra.sitra.repository.seguridad.PersonaRepository;
+import com.sitra.sitra.persistence.repository.seguridad.PersonaRepository;
 import com.sitra.sitra.service.seguridad.PersonaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.sitra.sitra.repository.maestros;
+package com.sitra.sitra.persistence.repository.maestros;
 
 import com.sitra.sitra.entity.maestros.TablaMaestraEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package com.sitra.sitra.repository.turnos;
+package com.sitra.sitra.persistence.repository.turnos;
 
 import com.sitra.sitra.entity.turnos.LlamadaEntity;
 import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
