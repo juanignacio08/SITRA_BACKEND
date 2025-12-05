@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public interface OrdenAtencionDetailProjection {
-
     Long getOrdenatencionid();
     Long getReceptorid();
     LocalDate getFecha();
@@ -14,6 +13,7 @@ public interface OrdenAtencionDetailProjection {
     String getCodventanillaOa();
 
     Long getPersonaid();
+    String getNombres();
     String getApellidopaterno();
     String getApellidomaterno();
     String getNumerodocumentoidentidad();

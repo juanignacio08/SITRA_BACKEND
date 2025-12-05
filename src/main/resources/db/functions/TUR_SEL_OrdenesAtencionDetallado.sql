@@ -19,6 +19,7 @@ RETURNS TABLE (
     codventanilla_oa       CHAR(6),
 
     personaid              BIGINT,
+	nombres					VARCHAR(100),
     apellidopaterno        VARCHAR(100),
     apellidomaterno        VARCHAR(100),
     numerodocumentoidentidad VARCHAR(20),
@@ -52,6 +53,7 @@ BEGIN
         oa.codventanilla,
 
         per.personaid,
+		per.nombres,
         per.apellidopaterno,
         per.apellidomaterno,
         per.numerodocumentoidentidad,
@@ -96,4 +98,4 @@ BEGIN
 END;
 $$;
 
--- SELECT * FROM turnos.TUR_SEL_OrdenesAtencionDetallado('2025-11-27');
+-- SELECT * FROM turnos.TUR_SEL_OrdenesAtencionDetallado('2025-12-03');

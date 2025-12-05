@@ -40,7 +40,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         context = "saveUser";
         log.info("Registrando un nuevo usuario. [ CONTEXTO : {} ]", context);
 
-        PersonaEntity persona = personaService.getPersonByNumberDocument(request.getNumeroDocumento());
+        PersonaEntity persona;
+        try {
+           persona = personaService.getPersonByNumberDocument(request.getNumeroDocumento());
+        } catch (NotFoundException e) {
+            persona = UsuarioRequest.fromRequestToPerson.apply(request);
+        }
+
         RolEntity rol = rolService.getRol(request.getRolId());
 
         if (existsUserByNumberDocument(request.getNumeroDocumento())) throw new DuplicateKeyError("El usuario ingresado ya existe!");

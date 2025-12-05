@@ -1,5 +1,6 @@
 package com.sitra.sitra.expose.request.seguridad;
 
+import com.sitra.sitra.entity.seguridad.PersonaEntity;
 import com.sitra.sitra.entity.seguridad.UsuarioEntity;
 import com.sitra.sitra.expose.util.PasswordUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
@@ -37,9 +38,28 @@ public class UsuarioRequest {
 
     private int estado;
 
+    private String name;
+    private String lastName1;
+    private String lastName2;
+    private String documentTypeCode;
+
     public static final Function<UsuarioRequest, UsuarioEntity> toEntity = request -> UsuarioEntity.builder()
             .usuario(request.getNumeroDocumento())
             .contrasena(PasswordUtil.encriptar(request.getContrasena()))
+            .estado(1)
+            .actualizadoPor(SecurityUtil.getCurrentUserId())
+            .fechaActualizacion(LocalDateTime.now())
+            .creadoPor(SecurityUtil.getCurrentUserId())
+            .fechaCreacion(LocalDateTime.now())
+            .eliminado(false)
+            .build();
+
+    public static final Function<UsuarioRequest, PersonaEntity> fromRequestToPerson = request -> PersonaEntity.builder()
+            .apellidoPaterno(request.getLastName1())
+            .apellidoMaterno(request.getLastName2())
+            .nombre(request.getName())
+            .tipoDocumentoIdentidad(request.getDocumentTypeCode())
+            .numeroDocumentoIdentidad(request.getNumeroDocumento())
             .estado(1)
             .actualizadoPor(SecurityUtil.getCurrentUserId())
             .fechaActualizacion(LocalDateTime.now())

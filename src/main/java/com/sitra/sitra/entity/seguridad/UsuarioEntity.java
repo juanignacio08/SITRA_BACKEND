@@ -28,7 +28,7 @@ public class UsuarioEntity {
     @JoinColumn(name = "rolid", nullable = false) // Mapea al campo rolId de la tabla
     private RolEntity rol;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "personaid", nullable = false) // Mapea al campo personaId de la tabla
     private PersonaEntity persona;
 
