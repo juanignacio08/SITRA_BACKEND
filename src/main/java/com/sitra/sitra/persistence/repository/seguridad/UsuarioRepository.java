@@ -27,15 +27,16 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
         return findByUsuarioIdAndEliminadoEquals(userId, false);
     }
 
+    @EntityGraph(attributePaths = {"rol", "persona"})
     Optional<UsuarioEntity> findByUsuarioAndEliminado(String user, boolean eliminado);
     default Optional<UsuarioEntity> getByUser(String user) {
         return findByUsuarioAndEliminado(user, false);
     }
 
     @EntityGraph(attributePaths = {"rol", "persona"})
-    List<UsuarioEntity> findByEliminado(boolean eliminado);
+    List<UsuarioEntity> findByEliminadoOrderByRol_RolIdAsc(boolean eliminado);
     default List<UsuarioEntity> getUsers() {
-        return findByEliminado(false);
+        return findByEliminadoOrderByRol_RolIdAsc(false);
     }
 
 }

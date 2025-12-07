@@ -124,9 +124,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         UsuarioEntity entity = getUserByUser(user);
 
-        if (!PasswordUtil.comparar(password, entity.getContrasena())) throw new NotFoundException("Usuario no encontrado.");
+        if (!PasswordUtil.comparar(password, entity.getContrasena())) throw new NotFoundException("Contraseña Incorrecta.");
 
-        return UsuarioResponse.toResponse.apply(entity);
+        return UsuarioResponse.toResponseDetail.apply(entity);
     }
 
     @Override
@@ -148,7 +148,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioEntity getUserByUser(String user) {
         return usuarioRepository.getByUser(user)
-                .orElseThrow(() -> new NotFoundException("Registro no encontrado. [ Usuario ]"));
+                .orElseThrow(() -> new NotFoundException("Usuario no registrado"));
     }
 
     @Override
