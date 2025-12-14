@@ -17,6 +17,8 @@ public interface OrdenAtencionService {
     List<OrdenAtencionResponse> getAttentionOrderInCallsStatus(String date);
     OrdenAtencionResponse getById(Long id);
     List<OrdenAtencionDetailProjection> getRecordByDate(String date);
+    List<OrdenAtencionResponse> getListByDateAndReceptor(Long receptorId, String date);
+    List<OrdenAtencionResponse> getListByDate(String date);
 
     OrdenAtencionEntity getOrdenById(Long id);
     OrdenAtencionEntity getOrderInCallStatus(String codePriority, LocalDate date);

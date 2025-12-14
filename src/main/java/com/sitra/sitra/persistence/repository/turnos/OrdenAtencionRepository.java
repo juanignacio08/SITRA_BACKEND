@@ -82,6 +82,18 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
         );
     }
 
+    @EntityGraph(attributePaths = {"persona"})
+    List<OrdenAtencionEntity> findByFechaAndReceptor_UsuarioIdAndEliminadoOrderByTurnoAsc(LocalDate date, Long receptorId, boolean deleted);
+    default List<OrdenAtencionEntity> getByDateAndReceptor(LocalDate date, Long receptorId) {
+        return findByFechaAndReceptor_UsuarioIdAndEliminadoOrderByTurnoAsc(date, receptorId, false);
+    }
+
+    @EntityGraph(attributePaths = {"persona"})
+    List<OrdenAtencionEntity> findByFechaAndEliminadoOrderByTurnoAsc(LocalDate date, boolean deleted);
+    default List<OrdenAtencionEntity> getByDate(LocalDate date) {
+        return findByFechaAndEliminadoOrderByTurnoAsc(date, false);
+    }
+
     @Query(value = "SELECT * FROM turnos.TUR_SEL_OrdenesAtencionDetallado(:p_fecha)", nativeQuery = true)
     List<OrdenAtencionDetailProjection> getRecordsByDate(@Param("p_fecha") LocalDate fecha);
 

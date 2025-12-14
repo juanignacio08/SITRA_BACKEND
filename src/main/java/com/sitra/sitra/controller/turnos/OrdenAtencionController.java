@@ -133,4 +133,33 @@ public class OrdenAtencionController {
         }
     }
 
+    @GetMapping("/getByDateAndReceptor")
+    public ResponseEntity<ResponseDTO<Object>> getByDateAndReceptor(
+            @RequestParam(name = "date") String date,
+            @RequestParam(name = "receptor") Long receptor
+    ) {
+        try {
+            List<OrdenAtencionResponse> response = ordenAtencionService.getListByDateAndReceptor(receptor, date);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo los ordenes de atencion!");
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getByDateAndReceptor: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @GetMapping("/getByDate")
+    public ResponseEntity<ResponseDTO<Object>> getByDate(
+            @RequestParam(name = "date") String date
+    ) {
+        try {
+            List<OrdenAtencionResponse> response = ordenAtencionService.getListByDate(date);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo los ordenes de atencion!");
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getByDate: {}", e.getMessage());
+            throw e;
+        }
+    }
+
 }

@@ -150,6 +150,33 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
     }
 
     @Override
+    public List<OrdenAtencionResponse> getListByDateAndReceptor(Long receptorId, String date) {
+        String context = "getListByDateAndReceptor";
+        log.info("Obteniendo todas las ordenes de atencion por su fecha y receptor. [ RECEPTOR : {} | FECHA : {} | CONTEXTO : {} ]", receptorId, date, context);
+        if (receptorId == null || receptorId < 1) throw new BadRequestException("Id del receptor incorrecto.");
+        if (date == null || date.length() != 10) throw new BadRequestException("Formato de fecha incorrecto.");
+
+        LocalDate dateFilter = DateConvertUtil.parseFechaDDMMYYYY(date);
+
+        List<OrdenAtencionEntity> list = ordenAtencionRepository.getByDateAndReceptor(dateFilter, receptorId);
+
+        return list.stream().map(OrdenAtencionResponse.toResponseDetailPerson).toList();
+    }
+
+    @Override
+    public List<OrdenAtencionResponse> getListByDate(String date) {
+        String context = "getListByDate";
+        log.info("Obteniendo todas las ordenes de atencon por una fecha. [ FECHA : {} | CONTEXTO : {} ]", date, context);
+        if (date == null || date.length() != 10) throw new BadRequestException("Formato de fecha incorrecto.");
+
+        LocalDate dateFilter = DateConvertUtil.parseFechaDDMMYYYY(date);
+
+        List<OrdenAtencionEntity> list = ordenAtencionRepository.getByDate(dateFilter);
+
+        return list.stream().map(OrdenAtencionResponse.toResponseDetailPerson).toList();
+    }
+
+    @Override
     public OrdenAtencionEntity getOrdenById(Long id) {
         if (id == null || id < 1) throw new BadRequestException("Id Incorrecto. [ ORDENATENCION ]");
 
