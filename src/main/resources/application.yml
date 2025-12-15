@@ -26,3 +26,6 @@ spring:
     #        org.hibernate.SQL: DEBUG #INFO
     #        org.hibernate.type.descriptor.sql.BasicBinder: INFO #TRACE
     #org.hibernate.orm.jdbc.bind: TRACE
+  web:
+    resources:
+      add-mappings: false

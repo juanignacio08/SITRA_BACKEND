@@ -14,6 +14,7 @@ import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.PersonaService;
 import com.sitra.sitra.service.seguridad.UsuarioService;
 import com.sitra.sitra.service.turnos.OrdenAtencionService;
+import com.sitra.sitra.service.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
     private final PersonaService personaService;
     private final UsuarioService usuarioService;
 
+    private final WebSocketService webSocketService;
+
     @Override
     @Transactional
     public OrdenAtencionResponse save(OrdenAtencionRequest request) {
@@ -60,7 +63,12 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
 
         OrdenAtencionEntity saved = ordenAtencionRepository.save(entity);
 
-        return OrdenAtencionResponse.toResponse.apply(saved);
+        OrdenAtencionResponse response = OrdenAtencionResponse.toResponseDetailPerson.apply(saved);
+
+        // NUEVO: Notificar por WebSocket
+        webSocketService.notificarNuevaOrden(response);
+
+        return response;
     }
 
     @Override
