@@ -21,6 +21,9 @@ public class UsuarioEntity {
     @Column(name = "usuario", nullable = false, length = 100)
     private String usuario;
 
+    @Column(name = "codventanilla", length = 6)
+    private String codVentanilla;
+
     @Column(name = "contrasena", nullable = false, length = 255)
     private String contrasena;
 

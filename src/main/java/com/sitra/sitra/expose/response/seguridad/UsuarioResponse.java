@@ -16,6 +16,7 @@ public class UsuarioResponse {
     private Long usuarioId;
     private String usuario;
     private String contrasena;
+    private String codVentanilla;
     private RolResponse rol;
     private PersonaResponse persona;
     private int estado;
@@ -24,6 +25,7 @@ public class UsuarioResponse {
             .usuarioId(entity.getUsuarioId())
             .usuario(entity.getUsuario())
             .contrasena(entity.getContrasena())
+            .codVentanilla(entity.getCodVentanilla())
             .rol(new RolResponse(
                     entity.getRol().getRolId(),
                     null,
@@ -45,6 +47,7 @@ public class UsuarioResponse {
             .usuarioId(entity.getUsuarioId())
             .usuario(entity.getUsuario())
             .contrasena(entity.getContrasena())
+            .codVentanilla(entity.getCodVentanilla())
             .rol(RolResponse.toResponse.apply(entity.getRol()))
             .persona(PersonaResponse.toResponse.apply(entity.getPersona()))
             .estado(entity.getEstado())

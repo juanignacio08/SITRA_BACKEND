@@ -11,6 +11,7 @@ import com.sitra.sitra.expose.response.seguridad.UsuarioResponse;
 import com.sitra.sitra.expose.util.PasswordUtil;
 import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.persistence.repository.seguridad.UsuarioRepository;
+import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.PersonaService;
 import com.sitra.sitra.service.seguridad.RolService;
 import com.sitra.sitra.service.seguridad.UsuarioService;
@@ -29,15 +30,14 @@ import java.util.List;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+
     private final PersonaService personaService;
     private final RolService rolService;
-
-    private String context;
 
     @Override
     @Transactional
     public UsuarioResponse save(UsuarioRequest request) {
-        context = "saveUser";
+        String context = "saveUser";
         log.info("Registrando un nuevo usuario. [ CONTEXTO : {} ]", context);
 
         PersonaEntity persona;
@@ -52,6 +52,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (existsUserByNumberDocument(request.getNumeroDocumento())) throw new DuplicateKeyError("El usuario ingresado ya existe!");
 
         UsuarioEntity entity = UsuarioRequest.toEntity.apply(request);
+        if (rol.getDenominacion().equals("Asesor")) {
+            if (request.getCodVentanilla() == null) throw new BadRequestException("Indique a que ventanilla pertenece el asesor.");
+
+            if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(request.getCodVentanilla())) throw new BadRequestException("El codigo de la ventanilla es incorrecto.");
+        }
         entity.setPersona(persona);
         entity.setRol(rol);
 
@@ -62,7 +67,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioResponse getById(Long id) {
-        context = "getUserById";
+        String context = "getUserById";
         log.info("Buscando un usuario. [ USER : {} | CONTEXTO : {} ]", id, context);
 
         UsuarioEntity entity = getUserDetail(id);
@@ -72,7 +77,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<UsuarioResponse> getList() {
-        context = "getUsers";
+        String context = "getUsers";
         log.info("Buscando un usuarios. [ CONTEXTO : {} ]", context);
 
         List<UsuarioEntity> list = getUsers();
@@ -85,16 +90,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioResponse update(UsuarioRequest request) {
-        context = "updateUser";
+        String context = "updateUser";
         log.info("Actualizando el registro de un usuario. [ USUARIO : {} | CONTEXTO : {} ]", request.getUsuarioId(), context);
 
-        UsuarioEntity entity = getUser(request.getUsuarioId());
+        UsuarioEntity entity = getUserDetail(request.getUsuarioId());
+
+        if (entity.getRol().getDenominacion().equals("Asesor")) {
+            if (request.getCodVentanilla() == null) throw new BadRequestException("Indique a que ventanilla pertenece el asesor.");
+
+            if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(request.getCodVentanilla())) throw new BadRequestException("El codigo de la ventanilla es incorrecto.");
+        }
 
         UsuarioRequest.toUpdate(request, entity);
-
-        RolEntity rol = rolService.getRol(request.getRolId());
-
-        entity.setRol(rol);
 
         UsuarioEntity save = usuarioRepository.save(entity);
 
@@ -104,7 +111,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioResponse delete(Long id) {
-        context = "deleteUser";
+        String context = "deleteUser";
         log.info("Eliminando un usuario. [ USER : {} | CONTEXTO : {} ]", id, context);
 
         UsuarioEntity entity = getUser(id);
@@ -119,7 +126,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioResponse sigIn(String user, String password) {
-        context = "getByUserAndPassword";
+        String context = "getByUserAndPassword";
         log.info("Obteniendo un usuario por Email y Password. [ USER : {} | PASSWORD : {} | CONTEXTO : {} ]", user, password, context);
 
         UsuarioEntity entity = getUserByUser(user);

@@ -36,6 +36,8 @@ public class UsuarioRequest {
     @Min(value = 1, message = "El id del rol no debe de ser menor a 1")
     private Long rolId;
 
+    private String codVentanilla;
+
     private int estado;
 
     private String name;
@@ -46,6 +48,7 @@ public class UsuarioRequest {
     public static final Function<UsuarioRequest, UsuarioEntity> toEntity = request -> UsuarioEntity.builder()
             .usuario(request.getNumeroDocumento())
             .contrasena(PasswordUtil.encriptar(request.getContrasena()))
+            .codVentanilla(request.getCodVentanilla())
             .estado(1)
             .actualizadoPor(SecurityUtil.getCurrentUserId())
             .fechaActualizacion(LocalDateTime.now())
@@ -69,6 +72,7 @@ public class UsuarioRequest {
             .build();
 
     public static void toUpdate(UsuarioRequest request, UsuarioEntity entity) {
+        if (entity.getRol().getDenominacion().equals("Asesor") && request.getCodVentanilla() != null) entity.setCodVentanilla(request.getCodVentanilla());
         entity.setContrasena(PasswordUtil.encriptar(request.getContrasena()));
         entity.setEstado(request.getEstado());
         entity.setActualizadoPor(SecurityUtil.getCurrentUserId());
