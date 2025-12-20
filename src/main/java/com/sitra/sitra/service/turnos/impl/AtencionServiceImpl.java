@@ -17,6 +17,7 @@ import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.UsuarioService;
 import com.sitra.sitra.service.turnos.AtencionService;
 import com.sitra.sitra.service.turnos.LlamadaService;
+import com.sitra.sitra.service.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,12 @@ public class AtencionServiceImpl implements AtencionService {
     private final LlamadaService llamadaService;
     private final UsuarioService usuarioService;
 
+    private final WebSocketService webSocketService;
+
     @Override
     @Transactional
     public PantallaResponse save(AtencionRequest request) {
-        String context = "startAtention";
+        String context = "startAttention";
         log.info("Registrando una atencion. [ CONTEXTO : {} ]", context);
 
         if (!TablaMaestraServiceImpl.tableCodeVentanilla.containsValue(request.getCodVentanilla())) throw new NotFoundException("Ventanilla no registrado");
@@ -71,7 +74,7 @@ public class AtencionServiceImpl implements AtencionService {
 
         AtencionEntity saved = atencionRepository.save(entity);
 
-        return PantallaResponse.builder()
+        PantallaResponse pantallaResponse = PantallaResponse.builder()
                 .orderAtencionId(ordenAtencion.getOrdenAtencionId())
                 .llamadaId(llamada.getLlamadaId())
                 .atencionId(saved.getAtencionId())
@@ -84,6 +87,10 @@ public class AtencionServiceImpl implements AtencionService {
                 .numLlamada(llamada.getNumLlamada())
                 .codResultado(llamada.getCodResultado())
                 .build();
+
+        webSocketService.notificarNuevaAtencion(pantallaResponse);
+
+        return pantallaResponse;
     }
 
     @Override
@@ -123,7 +130,7 @@ public class AtencionServiceImpl implements AtencionService {
 
         AtencionEntity updated = atencionRepository.save(atencion);
 
-        return PantallaResponse.builder()
+        PantallaResponse pantallaResponse = PantallaResponse.builder()
                 .orderAtencionId(ordenAtencion.getOrdenAtencionId())
                 .llamadaId(llamada.getLlamadaId())
                 .atencionId(updated.getAtencionId())
@@ -136,6 +143,10 @@ public class AtencionServiceImpl implements AtencionService {
                 .numLlamada(llamada.getNumLlamada())
                 .codResultado(llamada.getCodResultado())
                 .build();
+
+        webSocketService.notificarFinalizarAtencion(pantallaResponse);
+
+        return pantallaResponse;
     }
 
     @Override

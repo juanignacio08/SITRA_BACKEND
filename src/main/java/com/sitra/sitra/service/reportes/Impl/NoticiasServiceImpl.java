@@ -7,6 +7,7 @@ import com.sitra.sitra.expose.response.reportes.NoticiasResponse;
 import com.sitra.sitra.expose.util.SecurityUtil;
 import com.sitra.sitra.persistence.repository.reportes.NoticiasRepository;
 import com.sitra.sitra.service.reportes.NoticiasService;
+import com.sitra.sitra.service.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class NoticiasServiceImpl implements NoticiasService {
 
     private final NoticiasRepository noticiasRepository;
 
+    private final WebSocketService webSocketService;
+
     @Override
     @Transactional
     public NoticiasResponse save(NoticiasRequest request) {
@@ -30,7 +33,11 @@ public class NoticiasServiceImpl implements NoticiasService {
 
         NoticiasEntity saved = noticiasRepository.save(entity);
 
-        return NoticiasResponse.toResponse.apply(saved);
+        NoticiasResponse noticiasResponse = NoticiasResponse.toResponse.apply(saved);
+
+        webSocketService.notificarNuevaNoticia(noticiasResponse);
+
+        return noticiasResponse;
     }
 
     @Override
@@ -43,7 +50,11 @@ public class NoticiasServiceImpl implements NoticiasService {
 
         NoticiasEntity updated = noticiasRepository.save(entity);
 
-        return NoticiasResponse.toResponse.apply(updated);
+        NoticiasResponse noticiasResponse = NoticiasResponse.toResponse.apply(updated);
+
+        webSocketService.notificarNuevaEdicionNoticia(noticiasResponse);
+
+        return noticiasResponse;
     }
 
     @Override
@@ -79,6 +90,10 @@ public class NoticiasServiceImpl implements NoticiasService {
 
         NoticiasEntity deleted = noticiasRepository.save(entity);
 
-        return NoticiasResponse.toResponse.apply(deleted);
+        NoticiasResponse noticiasResponse = NoticiasResponse.toResponse.apply(deleted);
+
+        webSocketService.notificarEliminacionNoticia(noticiasResponse);
+
+        return noticiasResponse;
     }
 }

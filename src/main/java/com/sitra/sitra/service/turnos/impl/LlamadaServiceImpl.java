@@ -17,6 +17,7 @@ import com.sitra.sitra.service.maestros.impl.TablaMaestraServiceImpl;
 import com.sitra.sitra.service.seguridad.UsuarioService;
 import com.sitra.sitra.service.turnos.LlamadaService;
 import com.sitra.sitra.service.turnos.OrdenAtencionService;
+import com.sitra.sitra.service.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class LlamadaServiceImpl implements LlamadaService {
     private final LlamadaRepository llamadaRepository;
     private final OrdenAtencionService ordenAtencionService;
     private final UsuarioService usuarioService;
+
+    private final WebSocketService webSocketService;
 
     @Override
     @Transactional
@@ -90,7 +93,7 @@ public class LlamadaServiceImpl implements LlamadaService {
 
             LlamadaEntity updated = llamadaRepository.save(llamada);
 
-            return PantallaResponse.builder()
+            PantallaResponse pantallaResponse = PantallaResponse.builder()
                     .orderAtencionId(orderAtentionInVentanilla.getOrdenAtencionId())
                     .llamadaId(updated.getLlamadaId())
                     .paciente(PersonaResponse.toResponse.apply(orderAtentionInVentanilla.getPersona()))
@@ -103,6 +106,11 @@ public class LlamadaServiceImpl implements LlamadaService {
                     .codResultado(updated.getCodResultado())
                     .build();
 
+            // NUEVO: Notificar por WebSocket
+            webSocketService.notificarNuevaLlamada(pantallaResponse);
+
+            return pantallaResponse;
+
         } else {
             orderAtentionNext = ordenAtencionService.getNextOrderInPendingStatus(codePriority, fecha);
             if (orderAtentionNext == null) return null;
@@ -114,7 +122,7 @@ public class LlamadaServiceImpl implements LlamadaService {
 
             LlamadaResponse response = saveByOrderAtentionAndAsesorAndVentanillaAndDate(orderAtentionNext, asesor, codeVentanilla, fecha);
 
-            return PantallaResponse.builder()
+            PantallaResponse pantallaResponse = PantallaResponse.builder()
                     .orderAtencionId(orderAtentionNext.getOrdenAtencionId())
                     .llamadaId(response.getLlamadaId())
                     .paciente(PersonaResponse.toResponse.apply(orderAtentionNext.getPersona()))
@@ -122,10 +130,15 @@ public class LlamadaServiceImpl implements LlamadaService {
                     .codPriority(orderAtentionNext.getCodPrioridad())
                     .turno(orderAtentionNext.getTurno())
                     .codEstadoAtencion(orderAtentionNext.getCodEstadoAtencion())
-                    .codVentanilla(response.getCodVentanilla())
+                    .codVentanilla(codeVentanilla)
                     .numLlamada(response.getNumLlamada())
                     .codResultado(response.getCodResultado())
                     .build();
+
+            // NUEVO: Notificar por WebSocket
+            webSocketService.notificarNuevaLlamada(pantallaResponse);
+
+            return pantallaResponse;
         }
     }
 
@@ -154,7 +167,7 @@ public class LlamadaServiceImpl implements LlamadaService {
 
         LlamadaEntity updated = llamadaRepository.save(entity);
 
-        return PantallaResponse.builder()
+        PantallaResponse pantallaResponse = PantallaResponse.builder()
                 .orderAtencionId(entity.getOrdenAtencion().getOrdenAtencionId())
                 .llamadaId(updated.getLlamadaId())
                 .paciente(PersonaResponse.toResponse.apply(entity.getOrdenAtencion().getPersona()))
@@ -166,6 +179,10 @@ public class LlamadaServiceImpl implements LlamadaService {
                 .numLlamada(updated.getNumLlamada())
                 .codResultado(updated.getCodResultado())
                 .build();
+
+        webSocketService.notificarNuevaAusencia(pantallaResponse);
+
+        return pantallaResponse;
     }
 
     @Override
