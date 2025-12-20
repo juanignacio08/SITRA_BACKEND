@@ -137,6 +137,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public UsuarioResponse sigInDefault(String user, String password) {
+        String context = "sigInDefault";
+        log.info("Obteniendo un usuario por DEFAULT. [ USER : {} | PASSWORD : {} | CONTEXTO : {} ]", user, password, context);
+
+        UsuarioEntity entity = getUserByUserAndPassword(user, password);
+
+        return UsuarioResponse.toResponseDetail.apply(entity);
+    }
+
+    @Override
     public UsuarioEntity getUserDetail(Long id) {
         if (id == null || id < 1) throw new BadRequestException("Id incorrecto. [ Usuario ]");
 
@@ -166,5 +176,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public boolean existsUserByNumberDocument(String numberDocument) {
         return usuarioRepository.existsUserByNumberDocument(numberDocument);
+    }
+
+    private UsuarioEntity getUserByUserAndPassword(String user, String password) {
+        return usuarioRepository.getByUserAndPassword(user, password)
+                .orElseThrow(() -> new NotFoundException("Usuario no registrado"));
     }
 }

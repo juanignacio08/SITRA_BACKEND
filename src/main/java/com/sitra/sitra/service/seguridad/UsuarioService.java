@@ -13,6 +13,7 @@ public interface UsuarioService {
     UsuarioResponse update(UsuarioRequest request);
     UsuarioResponse delete(Long id);
     UsuarioResponse sigIn(String user, String password);
+    UsuarioResponse sigInDefault(String user, String password);
 
     UsuarioEntity getUserDetail(Long id);
     UsuarioEntity getUser(Long id);

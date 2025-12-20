@@ -34,6 +34,12 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
     }
 
     @EntityGraph(attributePaths = {"rol", "persona"})
+    Optional<UsuarioEntity> findByUsuarioAndContrasenaAndEliminado(String user, String password, boolean eliminado);
+    default Optional<UsuarioEntity> getByUserAndPassword(String user, String password) {
+        return findByUsuarioAndContrasenaAndEliminado(user, password, false);
+    }
+
+    @EntityGraph(attributePaths = {"rol", "persona"})
     List<UsuarioEntity> findByEliminadoOrderByRol_RolIdAsc(boolean eliminado);
     default List<UsuarioEntity> getUsers() {
         return findByEliminadoOrderByRol_RolIdAsc(false);

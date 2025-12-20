@@ -97,4 +97,16 @@ public class UsuarioController {
             throw e;
         }
     }
+
+    @GetMapping("/getUsuarioDefault")
+    public ResponseEntity<ResponseDTO<Object>> getUsuarioDefault(@RequestParam(name = "user") String user, @RequestParam(name = "password") String password) {
+        try {
+            UsuarioResponse response = usuarioService.sigInDefault(user, password);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo usuario!");
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getUsuarioDefault: {}", e.getMessage());
+            throw e;
+        }
+    }
 }
