@@ -133,6 +133,21 @@ public class OrdenAtencionController {
         }
     }
 
+    @GetMapping("/getRecordByAsesorAndDate")
+    public ResponseEntity<ResponseDTO<Object>> getRecordByAsesorAndDate(
+            @RequestParam(name = "asesorId") Long asesorId,
+            @RequestParam(name = "date") String date
+    ) {
+        try {
+            List<OrdenAtencionDetailProjection> response = ordenAtencionService.getRecordByAsesorAndDate(asesorId, date);
+            ResponseDTO<Object> responseDTO = AppUtil.build(response, "Obteniendo a detalle los ordenes de atencion!");
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            log.error("Error en getRecordByAsesorAndDate: {}", e.getMessage());
+            throw e;
+        }
+    }
+
     @GetMapping("/getByDateAndReceptor")
     public ResponseEntity<ResponseDTO<Object>> getByDateAndReceptor(
             @RequestParam(name = "date") String date,

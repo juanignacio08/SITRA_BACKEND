@@ -1,16 +1,18 @@
 -- *************************************************************************************
 -- CREATED BY: CREIFER
--- DESCRIPTION: Selección de órdenes de atención, llamadas y atenciones asociadas.
+-- DESCRIPTION: Selección de órdenes de atención, llamadas y atenciones asociadas por
+--              fecha y asesor.
 -- DATE: 02.12.2025
 -- LAST UPDATE: 02.12.2025
 -- *************************************************************************************
--- DROP FUNCTION IF EXISTS turnos.TUR_SEL_OrdenesAtencionDetallado;
+-- DROP FUNCTION IF EXISTS turnos.TUR_SEL_OrdenesAtencionAsesorPorFechaAndAsesor;
 
-CREATE OR REPLACE FUNCTION turnos.TUR_SEL_OrdenesAtencionDetallado(
+CREATE OR REPLACE FUNCTION turnos.TUR_SEL_OrdenesAtencionAsesorPorFechaAndAsesor(
+    p_asesor_id BIGINT,
     p_fecha DATE
 )
 RETURNS TABLE (
-    ordenatencionid        BIGINT,
+	ordenatencionid        BIGINT,
     receptorid             BIGINT,
     fecha                  DATE,
     hora                   TIME,
@@ -31,8 +33,6 @@ RETURNS TABLE (
     horallamada            TIME,
     numllamada             INTEGER,
     codresultado           CHAR(6),
-
-	asesorNombre			VARCHAR(100),
 
     atencionid             BIGINT,
     fechaatencion          DATE,
@@ -68,15 +68,12 @@ BEGIN
         ll.numllamada,
         ll.codresultado,
 
-		perus.nombres,
-
         ate.atencionid,
         ate.fecha AS fechaatencion,
         ate.horainicio,
         ate.horafin,
         ate.codventanilla,
         ate.asesorid
-
     FROM turnos.ordenatencion oa
     JOIN seguridad.persona per
         ON per.personaid = oa.personaid
@@ -85,21 +82,13 @@ BEGIN
 
     JOIN turnos.llamada ll
         ON oa.ordenatencionid = ll.ordenatencionid
+        AND ll.asesorid = p_asesor_id
         AND ll.estado = 1
         AND ll.eliminado = false
 
-	JOIN seguridad.usuario us
-		ON us.usuarioid = ll.asesorid
-		AND us.estado = 1
-		AND us.eliminado = false
-
-	JOIN seguridad.persona perus
-		ON perus.personaid = us.personaid
-		AND perus.estado = 1
-		AND perus.eliminado = false
-
     LEFT JOIN turnos.atencion ate
         ON oa.ordenatencionid = ate.ordenatencionid
+        AND ate.asesorid = p_asesor_id
         AND ate.estado = 1
         AND ate.eliminado = false
 
@@ -112,4 +101,4 @@ BEGIN
 END;
 $$;
 
--- SELECT * FROM turnos.TUR_SEL_OrdenesAtencionDetallado('2025-12-20');
+-- SELECT * FROM turnos.TUR_SEL_OrdenesAtencionAsesorPorFechaAndAsesor(22, '2025-12-20');

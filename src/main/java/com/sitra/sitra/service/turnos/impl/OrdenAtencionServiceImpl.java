@@ -152,9 +152,16 @@ public class OrdenAtencionServiceImpl implements OrdenAtencionService {
         if (date == null || date.length() != 10) throw new BadRequestException("Fecha incorrecta. (dd/mm/YYYY)");
         LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
 
-        List<OrdenAtencionDetailProjection> list = ordenAtencionRepository.getRecordsByDate(fecha);
+        return ordenAtencionRepository.getRecordsByDate(fecha);
+    }
 
-        return list;
+    @Override
+    public List<OrdenAtencionDetailProjection> getRecordByAsesorAndDate(Long asesorId, String date) {
+        if (date == null || date.length() != 10) throw new BadRequestException("Fecha incorrecta. (dd/mm/YYYY)");
+        if (asesorId == null || asesorId < 1) throw new BadRequestException("Asesor Id Incorrecto.");
+        LocalDate fecha = DateConvertUtil.parseFechaDDMMYYYY(date);
+
+        return ordenAtencionRepository.getRecordsByAsesorAndDate(asesorId, fecha);
     }
 
     @Override

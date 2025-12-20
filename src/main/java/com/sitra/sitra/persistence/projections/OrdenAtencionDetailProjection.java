@@ -26,6 +26,8 @@ public interface OrdenAtencionDetailProjection {
     Integer getNumllamada();
     String getCodresultado();
 
+    String getAsesorNombre();
+
     Long getAtencionid();
     LocalDate getFechaatencion();
     LocalTime getHorainicio();

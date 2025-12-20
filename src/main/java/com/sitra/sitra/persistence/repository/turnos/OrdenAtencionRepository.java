@@ -97,4 +97,6 @@ public interface OrdenAtencionRepository extends JpaRepository<OrdenAtencionEnti
     @Query(value = "SELECT * FROM turnos.TUR_SEL_OrdenesAtencionDetallado(:p_fecha)", nativeQuery = true)
     List<OrdenAtencionDetailProjection> getRecordsByDate(@Param("p_fecha") LocalDate fecha);
 
+    @Query(value = "SELECT * FROM turnos.TUR_SEL_OrdenesAtencionAsesorPorFechaAndAsesor(:p_asesor_id, :p_fecha)", nativeQuery = true)
+    List<OrdenAtencionDetailProjection> getRecordsByAsesorAndDate(@Param("p_asesor_id") Long asesorId, @Param("p_fecha") LocalDate fecha);
 }
